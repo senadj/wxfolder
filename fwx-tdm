@@ -1,0 +1,149 @@
+[ -d "$YWX" ] || echo -e "\n\n\n\nfwx-tdm: NO YWX directory.\n\n\n\n"
+
+##########################################################################################
+buildwxconfig()
+{
+[ "$1" = "force" ] && [ -f $YWX/bin/wx-config.exe ] && rm $YWX/bin/wx-config.exe
+
+[ -f "$YWX/bin/wx-config.exe" ] && return 0
+[ -d "$YWX" ] || { echo -e "\n\n\n\nwx-config not build. Missing YWX directory.\n\n\n\n"; return 1; }
+cd $YWX/wxfolder/wx-config || { echo -e "\n\n\n\nwx-config not build. Missing wxfolder.\n\n\n\n"; return 1; }
+[ -d "$YWX/bin" ] || mkdir "$YWX/bin"
+
+#wxbase30u
+wxbaselib=`find $YWX/lib/gcc_lib -name "libwxbase*" | sort | head -1 | awk -F'/' '{print $NF}' | cut -d'.' -f1 | cut -c4-`
+g++ wx-config.cpp -o $YWX/bin/wx-config.exe -std=gnu++0x -O2 -static -static-libstdc++ -s -DYWX=`cygpath -m $YWX` -I$YWX/lib/gcc_lib/mswu -I$YWX/include -L$YWX/lib/gcc_lib -l$wxbaselib -lole32 -luuid -lversion
+if [ `echo $PATH | grep wxWidgets | wc -l` -eq 0 ]; then export PATH=$PATH:$YWX/bin; fi
+}
+
+##########################################################################################
+buildyconfig()
+{
+[ "$1" = "force" ] && [ -f $YWX/bin/y-config.exe ] && rm $YWX/bin/y-config.exe
+
+[ -f "$YWX/bin/y-config.exe" ] && return 0
+mkdir -p "$YWX/bin" && cd $YWX/wxfolder/y-config || { echo -e "\n\n\n\ny-config not build. \n\n\n\n"; return 1; }
+
+truncate y-config.h --size 0
+
+if [ -d "$YBOO/stage/lib" ]; then
+YTMP=$((`echo $YBOO | wc -c`+14))
+echo "#define YBOOSTLIBS "`ls $YBOO/stage/lib/*.a | grep -v "\-d\-" | cut -c $YTMP- | cut -d'.' -f1 | awk '{print "-l" $0}'`"" >> y-config.h
+echo "#define YBOOSTLIBSD "`ls $YBOO/stage/lib/*.a | grep "\-d\-" | cut -c $YTMP- | cut -d'.' -f1 | awk '{print "-l" $0}'`"" >> y-config.h
+fi
+
+[ -f "$YBASE/scripts/ydeps" ] && for file in `cat $YBASE/scripts/ydeps | grep -v YBOOSUFFIX`; do ykey=`printf $file | cut -d'=' -f1`; yval=`printf $file | cut -d'=' -f2`; echo "#define $ykey "`cygpath -m $yval`; done >> y-config.h
+
+wxbaselib=`find $YWX/lib/gcc_lib -name "libwxbase*" | sort | head -1 | awk -F'/' '{print $NF}' | cut -d'.' -f1 | cut -c4-`
+g++ y-config.cpp -o $YWX/bin/y-config.exe -std=gnu++0x -O2 -static -static-libstdc++ -s -I$YWX/lib/gcc_lib/mswu -I$YWX/include -L$YWX/lib/gcc_lib -l$wxbaselib -lole32 -luuid -lversion
+}
+
+
+
+##########################################################################################
+buildwxjson()
+{
+if [ ! -f "$YWX/lib/gcc_lib/libwxjson.a" ]; then
+	cd $YWX/wxfolder/wxjson
+	cp -R include $YWX
+	cd src
+	`wx-config --cxx` `wx-config --cxxflags` -c *.cpp
+	ar rc $YWX/lib/gcc_lib/libwxjson.a *.o
+fi
+
+if [ ! -f "$YWX/lib/gcc_lib/libwxjsond.a" ] && [ `find $YWX/lib/gcc_lib/* -prune -name "*ud_core.a" | wc -l` -gt 0 ]; then
+	cd $YWX/wxfolder/wxjson
+	cp -R include $YWX
+	cd src
+	`wx-config --cxx --debug` `wx-config --cxxflags --debug` -c *.cpp
+	ar rc $YWX/lib/gcc_lib/libwxjsond.a *.o
+fi
+}
+
+##########################################################################################
+buildwxthings()
+{
+if [ ! -f "$YWX/lib/gcc_lib/libwxthings.a" ]; then
+	cd $YWX/wxfolder/wxthings
+	cp -R include $YWX
+	cd src
+	`wx-config --cxx` `wx-config --cxxflags` -c *.cpp
+	ar rc $YWX/lib/gcc_lib/libwxthings.a *.o
+fi
+
+if [ ! -f "$YWX/lib/gcc_lib/libwxthingsd.a" ] && [ `find $YWX/lib/gcc_lib/* -prune -name "*ud_core.a" | wc -l` -gt 0 ]; then
+	cd $YWX/wxfolder/wxthings
+	cp -R include $YWX
+	cd src
+	`wx-config --cxx --debug` `wx-config --cxxflags --debug` -c *.cpp
+	ar rc $YWX/lib/gcc_lib/libwxthingsd.a *.o
+fi
+}
+
+##########################################################################################
+buildwxplotctrl()
+{
+if [ ! -f "$YWX/lib/gcc_lib/libplotctrl.a" ]; then
+	cd $YWX/wxfolder/wxplotctrl
+	cp -R include $YWX
+	cd src
+	gcc -c -I../include fourier.c
+	`wx-config --cxx` `wx-config --cxxflags` -c *.cpp *.cc
+	ar rc $YWX/lib/gcc_lib/libplotctrl.a *.o
+fi
+
+if [ ! -f "$YWX/lib/gcc_lib/libplotctrld.a" ] && [ `find $YWX/lib/gcc_lib/* -prune -name "*ud_core.a" | wc -l` -gt 0 ]; then
+	cd $YWX/wxfolder/wxplotctrl
+	cp -R include $YWX
+	cd src
+	gcc -g -Og -c -I../include fourier.c
+	`wx-config --cxx --debug` `wx-config --cxxflags --debug` -c *.cpp *.cc
+	ar rc $YWX/lib/gcc_lib/libplotctrld.a *.o
+fi
+}
+
+##########################################################################################
+buildwxflatnotebook()
+{
+if [ ! -f "$YWX/lib/gcc_lib/libwxflatnotebook.a" ]; then
+	cd $YWX/wxfolder/wxflatnotebook
+	cp -R include $YWX
+	cd src
+	`wx-config --cxx` `wx-config --cxxflags` -c *.cpp
+	ar rc $YWX/lib/gcc_lib/libwxflatnotebook.a *.o
+fi
+
+if [ ! -f "$YWX/lib/gcc_lib/libwxflatnotebookd.a" ] && [ `find $YWX/lib/gcc_lib/* -prune -name "*ud_core.a" | wc -l` -gt 0 ]; then
+	cd $YWX/wxfolder/wxflatnotebook
+	cp -R include $YWX
+	cd src
+	`wx-config --cxx --debug` `wx-config --cxxflags --debug` -c *.cpp
+	ar rc $YWX/lib/gcc_lib/libwxflatnotebookd.a *.o
+fi
+}
+
+##########################################################################################
+buildlibawx()
+{
+if [ ! -f "$YWX/lib/gcc_lib/libawx.a" ]; then
+	cd $YWX/wxfolder/libawx-0.9
+	cp -R include $YWX
+	cd src
+	`wx-config --cxx` `wx-config --cxxflags` -c *.cpp
+	ar rc $YWX/lib/gcc_lib/libawx.a *.o
+fi
+
+if [ ! -f "$YWX/lib/gcc_lib/libawxd.a" ] && [ `find $YWX/lib/gcc_lib/* -prune -name "*ud_core.a" | wc -l` -gt 0 ]; then
+	cd $YWX/wxfolder/libawx-0.9
+	cp -R include $YWX
+	cd src
+	`wx-config --cxx --debug` `wx-config --cxxflags --debug` -c *.cpp
+	ar rc $YWX/lib/gcc_lib/libawxd.a *.o
+fi
+}
+
+##########################################################################################
+
+
+export -f buildwxconfig buildwxjson buildwxthings buildwxplotctrl buildwxflatnotebook buildlibawx buildyconfig
+

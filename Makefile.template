@@ -1,0 +1,53 @@
+TARGET=Debug
+
+ifneq ($(MAKECMDGOALS), Debug)
+	ifneq ($(MAKECMDGOALS), cleanDebug)
+		TARGET=Release
+	endif
+endif
+
+ifneq (,$(findstring MINGW,$(shell uname)))
+    # Found MINGW; windows tdm-gcc
+	ifeq ($(TARGET),Release)
+		CXXFLAGS = `wx-config --cxxflags` -std=gnu++0x -O2 -Wno-deprecated-declarations
+		LDFLAGS = `wx-config --libs` -static -static-libgcc -static-libstdc++ -s
+
+	else
+		CXXFLAGS = `wx-config --cxxflags --debug` -std=gnu++0x -g -Og -Wno-deprecated-declarations
+		LDFLAGS = `wx-config --libs --debug`
+
+	endif
+
+	PROG = ./bin/$(TARGET)/$(notdir $(CURDIR)).exe
+else
+	PROG = ./bin/$(TARGET)/$(notdir $(CURDIR))
+endif
+
+CPPDEPS = -MT$@ -MF`echo $@ | sed -e 's,\.o$$,.d,'` -MD -MP
+OBJECTS := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+
+### Targets: ###
+Release: $(PROG)
+Debug: $(PROG)
+
+### Link: ###
+$(PROG): $(OBJECTS)
+	@[ -d ./bin/$(TARGET) ] || mkdir -p ./bin/$(TARGET)
+	g++ -o $@ $(OBJECTS) $(LDFLAGS)
+
+## Compile: ###
+.cpp.o:
+	g++ $(CXXFLAGS) -I. -c -o $@ $(CPPDEPS) $<
+
+## Clean: ###
+cleanDebug : cleanRelease
+
+cleanRelease:
+	@find . -name "*.d" -delete; find . -name "*.o" -delete; [ ! -f $(PROG) ] || rm $(PROG)
+
+clean:
+	find . -name "*.d" -delete; find . -name "*.o" -delete;
+
+# Dependencies tracking:
+-include *.d
+

@@ -1,0 +1,77 @@
+##########################################################################################
+setwxenv()
+{
+[ -d "$YWX" ] || { echo -e "\n\n\n\nsetwxenv: no YWX directory.\n\n\n\n"; return 1; }
+
+[ -f "$YBASE/scripts/ydeps" ] || touch $YBASE/scripts/ydeps
+
+if ! grep YWX $YBASE/scripts/ydeps > /dev/null; then
+	echo "YWX=$YWX" >> $YBASE/scripts/ydeps
+	export YWX
+fi
+
+if [ `echo $PATH | grep wxWidgets | wc -l` -eq 0 ]; then export PATH=$PATH:$YWX/bin; fi
+
+}
+
+
+##########################################################################################
+instwxwidgets()
+{
+[ -d "$YBASE" ] || { echo -e "\n\n\n\ninstwxwidgets: invalid YBASE directory.\n\n\n\n"; return 1; }
+[ -d "$YDEPS" ] || { echo -e "\n\n\n\ninstwxwidgets: invalid YDEPS directory.\n\n\n\n"; return 1; }
+[ -d "$YDL" ]  || { echo -e "\n\n\n\ninstwxwidgets: invalid YDL directory.\n\n\n\n"; return 1; }
+
+###[ -f "$YDL/wxWidgets-3.0.2.tar.bz2" ] || curl -L -k https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.2/wxWidgets-3.0.2.tar.bz2 > wxWidgets-3.0.2.tar.bz2
+###7za e -aoa $YDL/wxWidgets-3.0.2.tar.bz2 -so | 7za x -aoa -si -ttar -o$YDEPS
+
+[ -f "$YDL/wxWidgets-3.1.0.tar.bz2" ] || ( cd $YDL && curl -L -k https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.0/wxWidgets-3.1.0.tar.bz2 > wxWidgets-3.1.0.tar.bz2 )
+[ -d "$YWX" ] || ( 7za e -aoa $YDL/wxWidgets-3.1.0.tar.bz2 -so | 7za x -aoa -si -ttar -o$YDEPS && mkdir -p $YWX/bin )
+cd $YDEPS/wxWidgets-3.1.0 && YWX=`pwd` && export YWX
+
+setwxenv
+}
+
+##########################################################################################
+buildwxrelease()
+{
+[ -d "$YWX" ] || { echo -e "\n\n\n\nwxWidgets not build. Perhaps you need instwxwidgets first.\n\n\n\n"; return 1; }
+
+if [ `find $YWX/lib/gcc_lib/* -prune -name "*u_core.a" | wc -l` -eq 0 ]; then
+cd $YWX/build/msw
+sed -i 's/Og/O0/' makefile.gcc
+make CXXFLAGS="-std=gnu++0x -march=i686 -Wno-unused-variable -Wno-deprecated-declarations" LDFLAGS="-static -static-libgcc -static-libstdc++ -s" -f makefile.gcc SHARED=0 UNICODE=1 BUILD=release RUNTIME_LIBS=static clean
+make CXXFLAGS="-std=gnu++0x -march=i686 -Wno-unused-variable -Wno-deprecated-declarations" LDFLAGS="-static -static-libgcc -static-libstdc++ -s" -f makefile.gcc SHARED=0 UNICODE=1 BUILD=release RUNTIME_LIBS=static
+else
+echo "Found wxWidgets core lib, skipping build."
+fi
+
+make -f $YWX/wxfolder/Makefile
+setwxenv
+}
+
+##########################################################################################
+buildwxdebug()
+{
+setwxenv
+
+if [ `find $YWX/lib/gcc_lib/* -prune -name "*ud_core.a" | wc -l` -eq 0 ]; then
+cd $YWX/build/msw
+sed -i 's/O0/Og/' makefile.gcc
+make CXXFLAGS="-std=gnu++0x -Og -march=i686 -Wno-unused-variable -Wno-deprecated-declarations" LDFLAGS="-static -static-libgcc -static-libstdc++" -f makefile.gcc SHARED=0 UNICODE=1 BUILD=debug RUNTIME_LIBS=static clean
+make CXXFLAGS="-std=gnu++0x -Og -march=i686 -Wno-unused-variable -Wno-deprecated-declarations" LDFLAGS="-static -static-libgcc -static-libstdc++" -f makefile.gcc SHARED=0 UNICODE=1 BUILD=debug RUNTIME_LIBS=static
+else
+echo "Found wxWidgets debug core lib, skipping debug build."
+fi
+
+#needs wx-config for wx contribs
+[ -f "$YWX/bin/wx-config.exe" ] && [ -d "$YWX/wxfolder" ] && make -f $YWX/wxfolder/Makefile
+
+}
+
+##########################################################################################
+
+echo -e "\n\n"
+echo "instwxwidgets"
+echo "buildwxrelease"
+echo "buildwxdebug"
