@@ -21,7 +21,7 @@ $(PROG): bitz.dll main.o
 
 ### Compile: ###
 .cpp.o:
-	$(CXX) $(CXXFLAGS) -I./include/wx -c -o $@ $(CPPDEPS) $<
+	$(CXX) $(CXXFLAGS) -I./include -c -o $@ $(CPPDEPS) $<
 
 main.o:
 	`wx-config --cxx` `wx-config --cxxflags` -I/ydir/deps/boost_1_58_0 -I./include -c -o main.o -MTmain.o -MFmain.d -MD -MP main.cpp
