@@ -1,9 +1,9 @@
 #pragma once
 #include <wx/app.h>
 
+class xComPort;
 class wxBoostSerial;
 class xScratchClient;
-class xComPort;
 class xFrame;
 class xLogger;
 
@@ -17,6 +17,12 @@ class xApp : public wxApp
 public:
 
     int m_pincnt; // arduino pin count
+    xComPort* m_com;
+    wxBoostSerial* m_serial;
+    xScratchClient* m_tcp;
+    xFrame* m_frame;
+    xLogger* m_logger;
+
     StringKeyIntValHashMap m_alias2pin;
     IntKeyStringValHashMap m_pin2alias;
     std::vector<int> m_buff4arduino;   // used for storing pin values for arduino
@@ -26,11 +32,6 @@ public:
     std::vector<pin_state> m_writetype4arduino;   // UNCONFIGURED, DIGITALWRITE, ANALOGWRITE (used when updating from scratch)
     wxArrayString m_broadcasts;
 
-    xScratchClient* m_tcp;
-    wxBoostSerial* m_serial;
-    xComPort* m_com;
-    xFrame* m_frame;
-    xLogger* m_logger;
     xApp();
     bool ProcessCmdLine (wxChar** argv, int argc, wxString& port);
     bool OnInit();
@@ -43,7 +44,7 @@ public:
     void ArduinoPinData(int pin, int val);
     void ArduinoPinsData(std::vector<std::pair<int,int>>& vPinVals);
     void ArduinoBroadcasts();
-    void ArduinoUpdate();
+    void ArduinoPinsUpdate();
     bool IsScratchConnected();
     void AppendInfo(const wxString& pinfo);
     void SetScratchInfo(const wxString& pinfo);

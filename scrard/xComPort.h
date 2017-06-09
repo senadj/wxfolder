@@ -19,7 +19,6 @@ public:
 	std::vector<size_t > vBestPortIdx;
 
 	xComPort();
-	void SetPort(wxString& portname);
 	void ScanPorts();
 	bool GetBestPort(wxString& portname);
 

@@ -39,6 +39,7 @@ public:
     void LedOFF(GridLineMeta* pline);
     void SetInputFromExternal(int pin, char state); // d | a
     void SetAlias(int pin);
+    void HideRow(int pin);
 
 
 
