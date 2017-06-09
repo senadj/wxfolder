@@ -48,6 +48,7 @@ public:
     bool IsScratchConnected();
     void AppendInfo(const wxString& pinfo);
     void SetScratchInfo(const wxString& pinfo);
+    void SetInfo3(const wxString& pinfo);
 };
 
 DECLARE_APP(xApp)
