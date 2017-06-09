@@ -95,7 +95,7 @@ void xScratchClient::ProcessIncoming(int sockid, const wxString &line)
     }
 
     wxGetApp().ArduinoBroadcasts();
-    wxGetApp().ArduinoUpdate();   // send pin changes to serial
+    wxGetApp().ArduinoPinsUpdate();   // send pin changes to serial
 }
 
 /*

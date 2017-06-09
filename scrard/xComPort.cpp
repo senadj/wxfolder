@@ -11,17 +11,20 @@ xComPort::xComPort()
 
 bool xComPort::GetBestPort(wxString& portname)
 {
+
+#if defined __LINUX__
+    vPorts.push_back(std::make_pair("/dev/ttyACM0","/dev/ttyACM0"));
+    vBestPortIdx.push_back(0);
+    return true;
+#else
     if ( !vBestPortIdx.empty() )
     {
         portname = vPorts[vBestPortIdx.back()].second;
         return true;
     }
-    return false;
-}
+#endif // not
 
-void xComPort::SetPort(wxString& portname)
-{
-    m_cmdport = portname;
+    return false;
 }
 
 void xComPort::ScanPorts()
@@ -32,7 +35,6 @@ void xComPort::ScanPorts()
 
     vPorts.empty();
     vBestPortIdx.empty();
-
 
 #if defined __WINDOWS__
     if ( key.Exists() )
@@ -60,9 +62,6 @@ void xComPort::ScanPorts()
             wxLogError("xComPort: can't open RegKey.");
     else
         wxLogError("xComPort: non existent registry key.");
-    #else
-    vPorts.push_back(std::make_pair("/dev/ttyACM0","/dev/ttyACM0"));
-    vBestPortIdx.push_back(0);
 #endif
 
 }

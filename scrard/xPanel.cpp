@@ -52,6 +52,17 @@ void xPanel::LedOFF(GridLineMeta* pline)
     //if (awxled) awxled->SetState( awxLED_OFF );
 }
 
+void xPanel::HideRow(int pin)
+{
+    GridLineMeta& line = m_pins[pin];
+    for (int i=0; i<line.pobjs.Count(); i++)
+    {
+        wxWindow* win = wxDynamicCast(line.pobjs.Item(i),wxWindow);
+        if (win) win->Hide();
+    }
+
+}
+
 
 void xPanel::SetInputFromExternal(int pin, char state)  // called from scratch using broadcast: analogRead(10) | digitalRead(15)
 {
@@ -151,6 +162,7 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
     for (int k=0; k < m_cols.GetCount(); k++)
         m_mapc[m_cols[k]] = k;
 
+    // Uno
     anReadPins.insert(14);
     anReadPins.insert(15);
     anReadPins.insert(16);
@@ -165,6 +177,44 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
     anWritePins.insert(9);
     anWritePins.insert(10);
     anWritePins.insert(11);
+
+/*
+    //MEGA     app.m_pincnt=70
+
+    anReadPins.insert(54);
+    anReadPins.insert(55);
+    anReadPins.insert(56);
+    anReadPins.insert(57);
+    anReadPins.insert(58);
+    anReadPins.insert(59);
+    anReadPins.insert(60);
+    anReadPins.insert(61);
+    anReadPins.insert(62);
+    anReadPins.insert(63);
+    anReadPins.insert(64);
+    anReadPins.insert(65);
+    anReadPins.insert(66);
+    anReadPins.insert(67);
+    anReadPins.insert(68);
+    anReadPins.insert(69);
+
+
+    anWritePins.insert(2);
+    anWritePins.insert(3);
+    anWritePins.insert(4);
+    anWritePins.insert(5);
+    anWritePins.insert(6);
+    anWritePins.insert(7);
+    anWritePins.insert(8);
+    anWritePins.insert(9);
+    anWritePins.insert(10);
+    anWritePins.insert(11);
+    anWritePins.insert(12);
+    anWritePins.insert(13);
+    anWritePins.insert(44);
+    anWritePins.insert(45);
+    anWritePins.insert(46);
+    */
 
     wxBoxSizer* vboxsz = new wxBoxSizer(wxVERTICAL);
     wxFlexGridSizer* sizer = new wxFlexGridSizer( m_cols.GetCount(), 0, 0 );
@@ -266,8 +316,6 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
                 sizer->Add(cbox, 1, wxALIGN_CENTER|wxALIGN_CENTER_VERTICAL);
                 cbox->Disable();
                 */
-
-
             }
             else
             {
@@ -284,6 +332,9 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
     }
 
 	m_tctl = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxTE_MULTILINE | wxTE_RICH);
+
+	HideRow(0);
+	HideRow(1);
 
 	vboxsz->Add(sizer,1,wxEXPAND);
 	//vboxsz->Add(new wxButton(this,wxID_ANY,"click"),1,wxEXPAND);
@@ -321,7 +372,6 @@ void xPanel::OnSerialUpdate(wxString& s)
 
     if (slen>msglen)  // serial buffer garbage?
     {
-        //Serial.println("ignored:" + s.substring(0,slen-msglen));
         p+=slen-msglen;
     }
 
@@ -340,7 +390,7 @@ void xPanel::OnSerialUpdate(wxString& s)
         //m_tctl->AppendText(wxString::Format("%i", pinNo) + " " + wxString::Format("%i", pinVal) + '\n');
         wxObject* obj = m_pins[pinNo].pobjs[m_mapc["ReadValue"]];
         wxStaticText* stat = wxDynamicCast( obj, wxStaticText );
-        stat->SetLabel(wxString::Format("%i", pinVal));
+        if (stat) stat->SetLabel(wxString::Format("%i", pinVal));
 
         if ( wxGetApp().m_buff4scratch[pinNo] != pinVal )
         {

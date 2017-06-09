@@ -62,6 +62,8 @@ void awxLed::DrawOnBitmap()
     wxSize s = GetClientSize();
     if((m_bitmap->GetWidth() != s.GetWidth()) || 
 	  (m_bitmap->GetHeight() != s.GetHeight())) {
+		if (s.x<1) s.x=16;
+		if (s.y<1) s.y=16;
 	   m_bitmap->Create(s.x,s.y);
     }
     wxMemoryDC dc;

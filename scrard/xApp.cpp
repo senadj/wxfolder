@@ -16,7 +16,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 
 xApp::xApp() : wxApp(), m_serial(NULL){}
 
-void xApp::ArduinoUpdate()
+void xApp::ArduinoPinsUpdate()
 {
     char buffer [3];
     wxString pinvalhex;
@@ -102,7 +102,8 @@ bool xApp::ProcessCmdLine (wxChar** argv, int argc, wxString& port)
 
 bool xApp::OnInit ()
 {
-    m_pincnt = 20; // arduino pin count
+    m_pincnt = 20; // arduino uno pin count
+    //m_pincnt = 70; // arduino mega pin count
     m_buff4arduino.resize(m_pincnt);
     m_flag4arduino.resize(m_pincnt);
     m_buff4scratch.resize(m_pincnt);
@@ -116,7 +117,7 @@ bool xApp::OnInit ()
    if (!ProcessCmdLine(argv, argc, comport))
         return false;
     else
-        m_com->SetPort(comport);
+        m_com->m_cmdport = comport;
 
 
 
@@ -180,6 +181,8 @@ bool xApp::OnInit ()
     // TCP
     m_tcp = new xScratchClient();
     m_tcp->Connect();
+
+
 
     return true ;
 }
