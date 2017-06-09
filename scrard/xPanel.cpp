@@ -13,10 +13,7 @@
 #include <wx/clntdata.h>
 #include <wx/awx/led.h>
 
-xPanel::~xPanel()
-{
-    wxDELETEA(m_pins);
-}
+xPanel::~xPanel() { wxDELETEA(m_pins); }
 
 // don't put in header!
 WX_DECLARE_HASH_SET( int, wxIntegerHash, wxIntegerEqual, IntegerHashSetType );
@@ -333,8 +330,8 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
 
 	m_tctl = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxTE_MULTILINE | wxTE_RICH);
 
-	HideRow(0);
-	HideRow(1);
+	//HideRow(0);
+	//HideRow(1);
 
 	vboxsz->Add(sizer,1,wxEXPAND);
 	//vboxsz->Add(new wxButton(this,wxID_ANY,"click"),1,wxEXPAND);

@@ -29,7 +29,8 @@ void xApp::ArduinoPinsUpdate()
             m_frame->m_panel->SetOutputFromExternal(i,m_buff4arduino[i]);
 
             snprintf ( buffer, 3, "%02x", i );
-            pinvalhex = wxString(buffer);
+            pinvalhex.Append(wxString(buffer));
+            //pinvalhex = wxString(buffer);
             snprintf ( buffer, 3, "%02x", m_buff4arduino[i] );
             pinvalhex.Append(wxString(buffer));
 
@@ -42,6 +43,7 @@ void xApp::ArduinoPinsUpdate()
     {
         snprintf ( buffer, 3, "%02x", msglen );
         pinvalhex.Append(wxString(buffer) + '\n');
+        SetInfo3(pinvalhex);
         WriteSerial(pinvalhex);
     }
 }
@@ -208,6 +210,11 @@ void xApp::AppendInfo(const wxString& pinfo)
 void xApp::SetScratchInfo(const wxString& pinfo)
 {
     m_frame->GetStatusBar()->SetStatusText(pinfo,1);
+}
+
+void xApp::SetInfo3(const wxString& pinfo)
+{
+    m_frame->GetStatusBar()->SetStatusText(pinfo,2);
 }
 
 
