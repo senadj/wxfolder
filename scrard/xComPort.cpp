@@ -1,4 +1,5 @@
 #include "xComPort.h"
+#include "xApp.h"
 
 xComPort::xComPort()
 #if defined __WINDOWS__
@@ -18,6 +19,11 @@ bool xComPort::GetBestPort(wxString& portname)
     return false;
 }
 
+void xComPort::SetPort(wxString& portname)
+{
+    m_cmdport = portname;
+}
+
 void xComPort::ScanPorts()
 {
     wxString val_name;
@@ -26,6 +32,7 @@ void xComPort::ScanPorts()
 
     vPorts.empty();
     vBestPortIdx.empty();
+
 
 #if defined __WINDOWS__
     if ( key.Exists() )
@@ -53,7 +60,9 @@ void xComPort::ScanPorts()
             wxLogError("xComPort: can't open RegKey.");
     else
         wxLogError("xComPort: non existent registry key.");
-#else
-  vPorts.push_back(std::make_pair("/dev/ttyACM0","/dev/ttyACM0"));
+    #else
+    vPorts.push_back(std::make_pair("/dev/ttyACM0","/dev/ttyACM0"));
+    vBestPortIdx.push_back(0);
 #endif
+
 }

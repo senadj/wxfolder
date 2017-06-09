@@ -1,5 +1,5 @@
-// #include "xScratchClient.h"
 #include "xApp.h"
+#include "xScratchClient.h"
 #include <wx/log.h>
 
 xScratchClient::xScratchClient() : wxSocketClient() { m_handler = new xSocketHandler(*this); }
@@ -13,25 +13,26 @@ bool xScratchClient::Connect()
     wxSocketClient::Connect(addr);
 }
 
-void UpdateArduinoBuffer(wxString pSensorId, wxString pValue)
+void UpdateArduinoBuffer(wxString& pSensorId, wxString pValue)
 {
-    long sensorId,value;
+    int sensorId;
+    long value;
+    wxString mappedPinName;
 
     // find pin number from alias
-    wxStringToStringHashMap::const_iterator it = wxGetApp().m_alias4pin.find(pSensorId);
+    StringKeyIntValHashMap::const_iterator it = wxGetApp().m_alias2pin.find(pSensorId);
 
-    if ( it==wxGetApp().m_alias4pin.end() )
+    if ( it==wxGetApp().m_alias2pin.end() )
         return;
 
-    if ( !(*it).second.ToLong(&sensorId) )
-        return;
+    sensorId = (*it).second;
 
     if ( pValue.Trim().ToLong(&value) ) // scratch value to number
     {
         // set values intended for arduino
         if ( wxGetApp().m_buff4arduino[sensorId] != value && value >= 0 && value < 256 )   // conditionally set pin values
         {
-            wxGetApp().m_buff4arduino[sensorId] = value;
+            wxGetApp().m_buff4arduino[sensorId] = (int)value;
             wxGetApp().m_flag4arduino[sensorId] = true;
             //wxLogMessage("new val set: " + wxString::Format("%i",value));
         }
@@ -46,6 +47,7 @@ void xScratchClient::ProcessIncoming(int sockid, const wxString &line)
     wxString  sensor;
 
     // wxLogMessage(line);
+    wxGetApp().SetScratchInfo(line);
 
     for ( wxArrayString::iterator it=tokens.begin(); it!=tokens.end(); ++it )
     {
@@ -63,7 +65,11 @@ void xScratchClient::ProcessIncoming(int sockid, const wxString &line)
                 sensor=tok;
             else
             {
-                if ( tok.length()>12 && tok.Mid(tok.length()-10).IsSameAs("broadcast ") )
+                if ( tok.length()>16 && tok.Mid(tok.length()-15).IsSameAs(" sensor-update ") )
+                {
+                    UpdateArduinoBuffer(sensor,tok.Mid(0,tok.length()-15));
+                }
+                else if ( tok.length()>9 && tok.Mid(tok.length()-10).IsSameAs("broadcast ") )
                 {
                     //wxLogMessage("sensor-update: " + sensor + ' ' + tok.Mid(0,tok.length()-10));
                     UpdateArduinoBuffer(sensor,tok.Mid(0,tok.length()-10));
@@ -72,7 +78,6 @@ void xScratchClient::ProcessIncoming(int sockid, const wxString &line)
                 }
                 else
                 {
-                    //wxLogMessage("sensor-update: " + sensor + ' ' + tok);
                     UpdateArduinoBuffer(sensor,tok);
                 }
 
@@ -121,7 +126,8 @@ void xScratchClient::ScratchUpdate()
     {
         if ( wxGetApp().m_flag4scratch[i] )
         {
-            msg.Append(" pin" + wxString::Format("%i",i) + ' ' + wxString::Format("%i",wxGetApp().m_buff4scratch[i]));
+            //msg.Append(" pin" + wxString::Format("%i",i) + ' ' + wxString::Format("%i",wxGetApp().m_buff4scratch[i]));
+            msg.Append( ' ' + wxGetApp().m_pin2alias[i] + ' ' + wxString::Format("%i",wxGetApp().m_buff4scratch[i]) );
             wxGetApp().m_flag4scratch[i] = false;
         }
     }
@@ -174,7 +180,6 @@ void xSocketHandler::OnSocketEvent(wxSocketEvent& ev)
                     if ( i == msgLen )
                     {
                         i=0; cksm=-buf[j];
-                        //out.Append(wxString::FromAscii(&(buf[j-msgLen+5]),msgLen-4));
                         out.Append(wxString::FromUTF8( &(buf[j-msgLen+5]), msgLen-4) );
                     }
                 }
@@ -204,7 +209,7 @@ void xSocketHandler::OnSocketLost()
 
 void xSocketHandler::OnSocketConnection()
 {
-    //wxLogMessage("TCP Connection Established");
+    wxGetApp().ArduinoCommand(0,0); // make arduino flush buffer
     wxGetApp().AppendInfo("Scratch connected.");
 /*
     wxString msg = "sensor-update p28 288 \"p29 kk\" 299 zz 22";
@@ -217,7 +222,6 @@ void xSocketHandler::OnSocketConnection()
     cb[3]=buffsz;
     memcpy(&(cb[4]), buff, buffsz);
 
-
   const char* data = "sensor-update \"zilt\" -11";
 
   unsigned char ab[1024];
@@ -225,7 +229,6 @@ void xSocketHandler::OnSocketConnection()
   ab[3]=strlen(data);
   memcpy(&(ab[4]),data,strlen(data));
   m_hndl.m_client.Write(ab,strlen(data)+4);
-
 
     m_client.Write(cb,buffsz+4);
 */

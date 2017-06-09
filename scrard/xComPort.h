@@ -1,9 +1,11 @@
 #pragma once
-#include "xApp.h"
-//#include <wx/utils.h>
+#include <vector>
+#include <wx/string.h>
 #if defined __WINDOWS__
 #include <wx/msw/registry.h>
 #endif
+
+typedef std::vector<std::pair<wxString,wxString>> KVType;
 
 class xComPort
 {
@@ -12,10 +14,12 @@ class xComPort
 #endif
 public:
 
+    wxString m_cmdport; // port set as command line argument
 	KVType vPorts;
-	wxVector<size_t > vBestPortIdx;
+	std::vector<size_t > vBestPortIdx;
 
 	xComPort();
+	void SetPort(wxString& portname);
 	void ScanPorts();
 	bool GetBestPort(wxString& portname);
 

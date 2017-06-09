@@ -90,12 +90,12 @@ void xPanel::SetOutputFromExternal(int pin, int value)
         if ( IsAnalogWriteable(pin) )
         {
             TogglePush(line, "analogWrite");
-            wxGetApp().m_writetype4arduino[pin] = AnalogWRITE;
+            wxGetApp().m_writetype4arduino[pin] = ANALOGWRITE;
         }
         else
         {
             TogglePush(line, "digitalWrite");
-            wxGetApp().m_writetype4arduino[pin] = DigitalWRITE;
+            wxGetApp().m_writetype4arduino[pin] = DIGITALWRITE;
         }
 
 
@@ -107,7 +107,7 @@ void xPanel::SetOutputFromExternal(int pin, int value)
         }
     }
 
-    if ( wxGetApp().m_writetype4arduino[pin] == AnalogWRITE )
+    if ( wxGetApp().m_writetype4arduino[pin] == ANALOGWRITE )
     {
         wxSlider* slider = wxDynamicCast(line.pobjs.Item(m_mapc["analogWriteValue"]),wxSlider);
         if (slider)
@@ -125,6 +125,11 @@ void xPanel::SetOutputFromExternal(int pin, int value)
     }
 }
 
+void xPanel::SetAlias(int pin)
+{
+    wxStaticCast(m_pins[pin].pobjs.Item(m_mapc["alias"]),wxStaticText)->SetLabelText(wxGetApp().m_pin2alias[pin]);;
+}
+
 xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
 {
 	m_cols.Add("pin");
@@ -140,6 +145,7 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
 	m_cols.Add("analogWrite");
 	m_cols.Add("analogWriteValue");
 	m_cols.Add("external");
+	m_cols.Add("alias");
 
 	// fill column to int map
     for (int k=0; k < m_cols.GetCount(); k++)
@@ -232,14 +238,15 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
                 else { sizer->Add(new wxWindow()); m_pins[i].pobjs.Add((wxObject*)NULL); }
 
             }
-            else if ( m_cols[j].IsSameAs("ReadValue") )
+            else if ( m_cols[j].IsSameAs("ReadValue") || m_cols[j].IsSameAs("alias"))
             {
                 //wxTextCtrl* tctl = new wxTextCtrl (this,wxID_ANY,m_cols[j]);
                 wxStaticText* tctl = new wxStaticText (this,wxID_ANY,m_cols[j]);
                 tctl->SetClientData((void*)&m_pins[i]);
                 m_pins[i].pobjs.Add((wxObject*)tctl);
                 sizer->Add(tctl);
-                tctl->Disable();
+                if (m_cols[j].IsSameAs("ReadValue"))
+                    tctl->Disable();
             }
             else if ( m_cols[j].IsSameAs("external") )
             {
@@ -499,9 +506,9 @@ void xPanel::ProcessToggle(GridLineMeta* pline /* source row line */ , int sidx 
 
             WindowEnable(pline,m_mapc["LOW"], bval);
             WindowEnable(pline,m_mapc["HIGH"], bval);
-            if ( wxGetApp().m_writetype4arduino[pline->pin] == AnalogWRITE )
+            if ( wxGetApp().m_writetype4arduino[pline->pin] == ANALOGWRITE )
             {
-                wxGetApp().m_writetype4arduino[pline->pin] = DigitalWRITE;
+                wxGetApp().m_writetype4arduino[pline->pin] = DIGITALWRITE;
                 wxGetApp().m_buff4arduino[pline->pin] = wxINT32_MIN;
             }
             wxGetApp().ArduinoCommand(pline->pin, 'W');
@@ -520,9 +527,9 @@ void xPanel::ProcessToggle(GridLineMeta* pline /* source row line */ , int sidx 
             WindowPopDisable(pline,m_mapc["LOW"]);
             WindowPopDisable(pline,m_mapc["HIGH"]);
             WindowEnable(pline,m_mapc["analogWriteValue"], bval);
-            if ( wxGetApp().m_writetype4arduino[pline->pin] == DigitalWRITE )
+            if ( wxGetApp().m_writetype4arduino[pline->pin] == DIGITALWRITE )
             {
-                wxGetApp().m_writetype4arduino[pline->pin] = AnalogWRITE;
+                wxGetApp().m_writetype4arduino[pline->pin] = ANALOGWRITE;
                 wxGetApp().m_buff4arduino[pline->pin] = wxINT32_MIN;
             }
             wxGetApp().ArduinoCommand(pline->pin, 'U');
@@ -592,7 +599,7 @@ void xPanel::OnClickToggleButton(wxCommandEvent & evt)
 
 void xPanel::OnClick(wxCommandEvent& evt)
 {
-    wxGetApp().Test();
+    //wxGetApp().Test();
 }
 
 

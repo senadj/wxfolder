@@ -1,0 +1,11 @@
+# win32
+g++ `wx-config --cxxflags` -I$YBOO -std=gnu++0x -Wno-deprecated-declarations -D_WIN32_WINNT=0x0501 -I. -c *.cpp
+g++ -static -static-libgcc -static-libstdc++ -s -o scrard.exe *.o `wx-config --libs std,awx` -L$YBOO/stage/lib -lboost_system-mgw51-mt-1_58 -lboost_thread-mgw51-mt-1_58 -lwsock32 -lws2_32
+
+# Linux
+cd $HOME/ydir/deps/wxWidgets-3.1.0/stage/build/wxfolder/scrard
+export LD_LIBRARY_PATH=$YWX/stage/build/lib
+export PATH=$YWX/stage/build/bin$:PATH
+g++ `wx-config --cxxflags` -I$YBOO -std=gnu++0x -Wno-deprecated-declarations -I. -c *.cpp
+g++ -o scrard *.o $YBOO/stage/lib/libboost_system.a $YBOO/stage/lib/libboost_thread.a `wx-config --libs std,awx`
+
