@@ -1,7 +1,6 @@
 #include "wxBoostSerial.h"
 #include "AsyncSerial.h"
 #include <boost/algorithm/string.hpp>
-//#include <boost/algorithm/string/regex.hpp>
 #include <wx/app.h>
 #include <vector>
 
@@ -15,7 +14,7 @@ public:
     std::string strdata;
 };
 
-wxBoostSerial::wxBoostSerial(): pimpl(new wxBoostSerialImpl)
+wxBoostSerial::wxBoostSerial() : pimpl(new wxBoostSerialImpl)
 {
 }
 
@@ -83,7 +82,6 @@ void wxBoostSerial::readCallback(const char *data, size_t size)
     {
         // http://stackoverflow.com/questions/7930796/boosttokenizer-vs-boostsplit
         boost::split(fields, pimpl->strdata, boost::is_from_range('\n','\n'));
-        //boost::algorithm::split_regex(fields, pimpl->strdata, boost::regex("(\r\n)+"));
         int numLines = fields.size()-1;
         pimpl->strdata = fields.at(numLines);
 

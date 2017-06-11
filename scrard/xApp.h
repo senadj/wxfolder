@@ -1,5 +1,6 @@
 #pragma once
 #include <wx/app.h>
+#include <wx/timer.h>
 
 class xComPort;
 class wxBoostSerial;
@@ -17,6 +18,8 @@ class xApp : public wxApp
 public:
 
     int m_pincnt; // arduino pin count
+    bool m_ping;
+    wxTimer m_timer;
     xComPort* m_com;
     wxBoostSerial* m_serial;
     xScratchClient* m_tcp;
@@ -36,6 +39,7 @@ public:
     bool ProcessCmdLine (wxChar** argv, int argc, wxString& port);
     bool OnInit();
     int OnExit();
+    void OnTimer(wxTimerEvent& event );
     int FilterEvent(wxEvent& evt);
     void CloseSerial();
     void CloseTcpSocket();

@@ -384,6 +384,12 @@ void xPanel::OnSerialUpdate(wxString& s)
         if (*pend) { m_tctl->AppendText("error\n"); return; } // hex to num conversion error
         p+=3;
 
+        if ( pinNo==0xFF && pinVal==0xFFF)
+        {
+            wxGetApp().m_ping = true;
+            return;
+        }
+
         //m_tctl->AppendText(wxString::Format("%i", pinNo) + " " + wxString::Format("%i", pinVal) + '\n');
         wxObject* obj = m_pins[pinNo].pobjs[m_mapc["ReadValue"]];
         wxStaticText* stat = wxDynamicCast( obj, wxStaticText );

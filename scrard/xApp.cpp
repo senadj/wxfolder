@@ -14,7 +14,7 @@ static const wxCmdLineEntryDesc g_cmdLineDesc [] =
     { wxCMD_LINE_NONE }
 };
 
-xApp::xApp() : wxApp(), m_serial(NULL){}
+xApp::xApp() : wxApp(), m_serial(NULL), m_ping(false) {}
 
 void xApp::ArduinoPinsUpdate()
 {
@@ -101,6 +101,19 @@ bool xApp::ProcessCmdLine (wxChar** argv, int argc, wxString& port)
     return true ;
 }
 
+void xApp::OnTimer(wxTimerEvent& event )
+{
+    if (m_ping)
+    {
+        if ( !m_tcp->IsOk() )
+            m_tcp->Connect();
+    }
+    else
+    {
+        ArduinoCommand(255,127);
+        m_timer.StartOnce(100);
+    }
+}
 
 bool xApp::OnInit ()
 {
@@ -155,7 +168,7 @@ bool xApp::OnInit ()
     }
     else if ( m_com->GetBestPort(comport) )
     {
-        AppendInfo( "AutoConnecting Best Port"  + comport + " ..." );
+        AppendInfo( "AutoConnecting Best Port "  + comport + " ..." );
         m_serial = new wxBoostSerial(comport,115200);
     }
     else
@@ -182,9 +195,11 @@ bool xApp::OnInit ()
 
     // TCP
     m_tcp = new xScratchClient();
-    m_tcp->Connect();
+    //m_tcp->Connect();
 
-
+    m_timer.SetOwner(this);
+    Bind( wxEVT_TIMER, &xApp::OnTimer, this );
+    m_timer.StartOnce(0);
 
     return true ;
 }
