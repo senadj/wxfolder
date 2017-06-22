@@ -208,6 +208,7 @@ class wxSerialDataManager
           case 'a' : AnalogReadSubscribe(pinNo, false); break;
           case 'i' : AnalogReadSubscribe(pinNo, false); DigitalReadSubscribe(pinNo,false); break;
 
+          case 127 : Serial.print("FFFFF05\n"); break; // ping
           //case 0 : delayMillis = 0; break; // nodelay
         }
 

@@ -15,6 +15,7 @@ bool xComPort::GetBestPort(wxString& portname)
 #if defined __LINUX__
     vPorts.push_back(std::make_pair("/dev/ttyACM0","/dev/ttyACM0"));
     vBestPortIdx.push_back(0);
+    portname = vPorts[vBestPortIdx.back()].second;
     return true;
 #else
     if ( !vBestPortIdx.empty() )

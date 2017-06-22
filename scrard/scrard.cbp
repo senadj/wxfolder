@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="scrard" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/scrard" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+			</Target>
+		</Build>
+		<Unit filename="AsyncSerial.cpp" />
+		<Unit filename="AsyncSerial.h" />
+		<Unit filename="Makefile" />
+		<Unit filename="scrard.ino" />
+		<Unit filename="scrard.xpm" />
+		<Unit filename="wxBoostSerial.cpp" />
+		<Unit filename="wxBoostSerial.h" />
+		<Unit filename="xApp.cpp" />
+		<Unit filename="xApp.h" />
+		<Unit filename="xComPort.cpp" />
+		<Unit filename="xComPort.h" />
+		<Unit filename="xFrame.cpp" />
+		<Unit filename="xFrame.h" />
+		<Unit filename="xLogger.h" />
+		<Unit filename="xPanel.cpp" />
+		<Unit filename="xPanel.h" />
+		<Unit filename="xScratchClient.cpp" />
+		<Unit filename="xScratchClient.h" />
+		<Extensions>
+			<code_completion>
+				<search_path add="${YWX}/lib/gcc_lib/mswu" />
+				<search_path add="${YWX}/include" />
+			</code_completion>
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

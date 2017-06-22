@@ -13,7 +13,7 @@ cleanRelease:
 ### Link: ###
 $(PROG): $(OBJECTS)
 	@[ -d ./bin/Release ] || mkdir -p ./bin/Release
-	g++ -o bin/Release/testx.exe *.o $(LDFLAGS)
+	g++ -o $(PROG) *.o $(LDFLAGS)
 
 
 .cpp.o:

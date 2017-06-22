@@ -203,7 +203,7 @@ void xSocketHandler::OnSocketEvent(wxSocketEvent& ev)
 
 void xSocketHandler::OnSocketLost()
 {
-    wxLogMessage("TCP Connection Lost");
+    wxGetApp().AppendInfo("TCP Connection Lost");
 }
 
 
