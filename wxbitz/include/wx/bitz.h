@@ -100,6 +100,7 @@ public:
     void OnPaint(wxPaintEvent& event);
     void Repaint();
     void SetBrushPenCombo(int pBrushIndex); // switch between multiple brush/pen combinations
+    void SetUint64(uint64_t pValue);
 
 protected:
 

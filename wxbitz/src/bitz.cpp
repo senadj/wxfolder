@@ -245,6 +245,16 @@ void wxBitzBitmapWindow::OnPaint(wxPaintEvent& event)
             wxBitz
 
 ***********************************************************************/
+void wxBitz::SetUint64(uint64_t pValue)
+{
+    if ( m_vch.size() < 8 )
+        return;
+
+    if ( m_vch.size() > 8 )
+        m_vch.assign(m_vch.size(),0);   // set to zero
+
+    memcpy( m_vch.data(), (void*)&pValue, sizeof(pValue) );
+}
 
 wxBitz::wxBitz(wxWindow* parent, const char* pPattern, wxBitzBitmap* pbitmap, std::vector<unsigned char> pvch)
     : m_pattern(pPattern), m_bbmp(pbitmap), m_height(0), m_width(0), m_has_dash(false), m_vch(pvch)
