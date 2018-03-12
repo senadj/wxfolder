@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include <vector>
 #include <wx/dlimpexp.h>
 #include <wx/bitmap.h>
 #include <wx/window.h>

@@ -24,7 +24,7 @@ $(PROG): bitz.dll main.o
 	$(CXX) $(CXXFLAGS) -I./include -c -o $@ $(CPPDEPS) $<
 
 main.o:
-	`wx-config --cxx` `wx-config --cxxflags` -I/ydir/deps/boost_1_58_0 -I./include -c -o main.o -MTmain.o -MFmain.d -MD -MP main.cpp
+	`wx-config --cxx` `wx-config --cxxflags` -I./include -c -o main.o -MTmain.o -MFmain.d -MD -MP main.cpp
 
 bitz.dll: $(OBJECTS)
 	g++ -shared ./src/bitz.o -o bitz.dll `wx-config --libs core` -Wl,--out-implib,libbitz.dll.a
