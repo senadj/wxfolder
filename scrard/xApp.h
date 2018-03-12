@@ -1,4 +1,6 @@
 #pragma once
+
+#include <vector>
 #include <wx/app.h>
 #include <wx/timer.h>
 
