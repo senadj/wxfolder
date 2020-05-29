@@ -178,11 +178,6 @@ public:
     double *GetXData() const;
     double *GetYData() const;
 
-    // Use with static data. Dangerous unless you really know what you are doing
-    void SetYData(double* y_data);
-	void SetXYData(double* x_data, double* y_data);
-	void SetXYPointsData(double* x_data, double* y_data, int points);
-
     // imaginary Y data, not normally created, but if !NULL then it will be free()ed, see FFT
     double *GetYiData() const;
     // use (double*)malloc(sizeof(double)*GetCount()) to create
