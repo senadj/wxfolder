@@ -2,7 +2,7 @@
 // Name:        plotdata.h
 // Purpose:     wxPlotData container class for wxPlotCtrl
 // Author:      John Labenski
-// Modified by:
+// Modified by: Yacoin Developers, 2020
 // Created:     12/1/2000
 // Copyright:   (c) John Labenski
 // Licence:     wxWindows licence
@@ -178,6 +178,9 @@ public:
     double *GetXData() const;
     double *GetYData() const;
 
+    // Use with static data. Dangerous unless you really know what you are doing
+    void SetXYPointsData(double* x_data, double* y_data, int points);
+	
     // imaginary Y data, not normally created, but if !NULL then it will be free()ed, see FFT
     double *GetYiData() const;
     // use (double*)malloc(sizeof(double)*GetCount()) to create

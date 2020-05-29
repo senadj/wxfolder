@@ -281,6 +281,8 @@ bool wxPlotData::Create( double *x_data, double *y_data, int points, bool static
     return true;
 }
 
+void wxPlotData::SetXYPointsData(double* x_data, double* y_data, int points) { M_PLOTDATA->m_Xdata = x_data; M_PLOTDATA->m_Ydata = y_data; M_PLOTDATA->m_count = points; }
+
 bool wxPlotData::Copy( const wxPlotData &source, bool copy_all )
 {
     wxCHECK_MSG( source.Ok(), false, wxT("Invalid wxPlotData") );
