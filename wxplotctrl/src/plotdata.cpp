@@ -32,6 +32,7 @@
 #include "wx/things/medsort.h"
 #include "wx/things/range.h"
 #include <math.h>
+#include <random>
 
 #define wxPLOTDATA_MAX_DATA_COLUMNS 64
 
@@ -46,6 +47,142 @@
     wxCHECK_RET((int(start_index)>=0)&&(int(start_index)<int(max_count))&&(int(end_index)>int(start_index))&&(int(end_index)<int(max_count)), wxT("Invalid data index") )
 
 const wxPlotData wxNullPlotData;
+
+// ----------------------------------------------------------------------------
+// wxPlotCircularBuffer
+// ----------------------------------------------------------------------------
+
+static std::random_device rd;
+static std::mt19937 mt(rd());
+
+template<unsigned int MINY,unsigned int MAXY>
+wxPlotCircularBuffer<MINY,MAXY>::wxPlotCircularBuffer(int size) : wxPlotData(), m_size(size), m_limit(size), m_count(0), m_cfwd(0)
+{
+	size_t bytesize = static_cast<size_t>( 2 * m_size * sizeof(double) );
+	m_index1 = m_ainit1 = (double*)malloc(bytesize);
+	m_index2 = m_ainit2 = (double*)malloc(bytesize);
+	memset(m_ainit1, 0, bytesize);
+	memset(m_ainit2, 0, bytesize);
+	m_alast1 = &m_ainit1[2*m_size-1];
+	m_alast2 = &m_ainit2[2*m_size-1];
+	//size_t some_rnd = 4; // zero to max(size-1)
+	static std::uniform_int_distribution<int> dist(0, m_size-1);
+	std::advance( m_index1, dist(mt) ); // random index start
+	std::advance( m_index2, dist(mt) ); // random index start
+	m_begin1 = m_index1;
+	m_begin2 = m_index2;
+	m_begin1++;
+	m_begin2++;
+	Create( m_ainit1, m_ainit2, 1, true );
+}
+
+template<unsigned int MINY,unsigned int MAXY>
+void wxPlotCircularBuffer<MINY,MAXY>::push_back( double valuex, double valuey )
+{
+	if ( m_count < m_size )
+	{
+		m_count++;
+		if ( m_count > m_limit )
+		{
+			m_begin11++;
+			m_begin22++;
+			m_cfwd = m_count - m_limit;
+		}
+	}
+	else
+	{
+		m_begin1++;
+		m_begin11++;
+		m_begin2++;
+		m_begin22++;
+	}
+
+	m_index1++;
+	if ( m_index1 > m_alast1 )
+	{
+		m_begin11 = m_begin1 = (double*)memmove( (void*)m_ainit1, (const void*)&m_ainit1[m_size+1], (m_size-1)*sizeof(double));
+		m_index1 = &m_ainit1[m_size-1]; // end of first part
+		if ( m_cfwd > 0 )
+			std::advance( m_begin11, m_cfwd );
+	}
+
+	m_index2++;
+	if ( m_index2 > m_alast2 )
+	{
+		m_begin22 = m_begin2 = (double*)memmove( (void*)m_ainit2, (const void*)&m_ainit2[m_size+1], (m_size-1)*sizeof(double));
+		m_index2 = &m_ainit2[m_size-1]; // end of first part
+		if ( m_cfwd > 0 )
+			std::advance( m_begin22, m_cfwd );
+	}
+
+	*m_index1 = valuex;
+	*m_index2 = valuey;
+
+	ResetPlotDataParameters();
+	//CalcBoundingRect();
+}
+
+template<unsigned int MINY,unsigned int MAXY>
+void wxPlotCircularBuffer<MINY,MAXY>::push_back( double valuex )
+{
+	push_back( valuex, backy() );
+}
+
+template<unsigned int MINY,unsigned int MAXY>
+void wxPlotCircularBuffer<MINY,MAXY>::ResetPlotDataParameters()
+{
+	if ( m_limit < m_size )
+	{
+		SetXYPointsData( m_begin11, m_begin22, m_count - m_cfwd );
+		SetBoundingRect( wxRect2DDouble(*m_begin11, minY, *m_index1 - *m_begin11, heightY) );
+	}
+	else
+	{
+		SetXYPointsData( m_begin1, m_begin2, m_count );
+		SetBoundingRect( wxRect2DDouble(*m_begin1, minY, *m_index1 - *m_begin1, heightY) );
+	}
+}
+
+template<unsigned int MINY,unsigned int MAXY>
+void wxPlotCircularBuffer<MINY,MAXY>::SetNewLimit( int new_limit )
+{
+	if ( new_limit < 1 )
+	{
+		m_limit = m_size;
+		m_begin11 = m_begin1;
+		m_begin22 = m_begin2;
+		m_cfwd = 0;
+		return;
+	}
+
+	if ( new_limit != m_limit && new_limit <= m_size )
+	{
+		m_limit = new_limit;
+		m_begin11 = m_begin1;
+		m_begin22 = m_begin2;
+		m_cfwd = (m_count > m_limit) ? m_count - m_limit : 0;
+		if ( m_cfwd > 0  )
+		{
+			std::advance( m_begin11, m_cfwd );
+			std::advance( m_begin22, m_cfwd );
+		}
+	}
+
+	if ( m_count > 0 )
+		ResetPlotDataParameters();
+}
+
+template<unsigned int MINY,unsigned int MAXY>
+double& wxPlotCircularBuffer<MINY,MAXY>::backx() { return *m_index1; }
+template<unsigned int MINY,unsigned int MAXY>
+double& wxPlotCircularBuffer<MINY,MAXY>::backy() { return *m_index2; }
+
+template<unsigned int MINY,unsigned int MAXY>
+wxPlotCircularBuffer<MINY,MAXY>::~wxPlotCircularBuffer()
+{
+	if (m_ainit1) free(m_ainit1);
+	if (m_ainit2) free(m_ainit2);
+}
 
 //----------------------------------------------------------------------------
 // wxPlotDataRefData
@@ -280,6 +417,8 @@ bool wxPlotData::Create( double *x_data, double *y_data, int points, bool static
     CalcBoundingRect();
     return true;
 }
+
+void wxPlotData::SetXYPointsData(double* x_data, double* y_data, int points) { M_PLOTDATA->m_Xdata = x_data; M_PLOTDATA->m_Ydata = y_data; M_PLOTDATA->m_count = points; }
 
 bool wxPlotData::Copy( const wxPlotData &source, bool copy_all )
 {

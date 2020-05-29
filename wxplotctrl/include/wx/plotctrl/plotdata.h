@@ -17,6 +17,7 @@
 
 class WXDLLIMPEXP_THINGS wxRangeIntSelection;
 class WXDLLIMPEXP_PLOTCTRL wxPlotData;
+class WXDLLIMPEXP_PLOTCTRL wxPlotBuffer;
 
 //-----------------------------------------------------------------------------
 // wxPlotData consts and defines
@@ -177,6 +178,9 @@ public:
     // Get a pointer to the data (call CalcBoundingRect afterwards if changing values)
     double *GetXData() const;
     double *GetYData() const;
+
+    // Use with static data. Dangerous unless you really know what you are doing
+    void SetXYPointsData(double* x_data, double* y_data, int points);
 
     // imaginary Y data, not normally created, but if !NULL then it will be free()ed, see FFT
     double *GetYiData() const;
@@ -411,6 +415,44 @@ private:
     virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const;
 
     DECLARE_DYNAMIC_CLASS(wxPlotData)
+};
+
+// ----------------------------------------------------------------------------
+// wxPlotCircularBuffer custom fixed height circular buffer 
+// ----------------------------------------------------------------------------
+
+template<unsigned int MINY,unsigned int MAXY>
+class WXDLLIMPEXP_PLOTCTRL wxPlotCircularBuffer : public wxPlotData
+{
+    static constexpr double minY = static_cast<double>(MINY);
+    static constexpr double heightY = static_cast<double>(MAXY);
+
+    int m_cfwd;  // offset from m_begin for limited items
+    double* m_ainit1;   // start of x array
+    double* m_index1;   // moving pointer to last active x
+    double* m_begin1;   // moving pointer to first active x
+    double* m_begin11;  // moving pointer to first active x in limited scope
+    double* m_alast1;   // end of x array
+    double* m_ainit2;   // same as above, but for y
+    double* m_index2;   // ...
+    double* m_begin2;   // ...
+    double* m_begin22;  // ...
+    double* m_alast2;   // ...
+	
+public:
+
+    const int m_size; // max active items
+    int m_count; // currently contained items
+    int m_limit; // limited items number (last n items)
+
+    wxPlotCircularBuffer(int size);
+    void push_back( double valuex, double valuey );
+	void push_back( double valuex ); // add x, but duplicate last y value
+    void ResetPlotDataParameters();
+    void SetNewLimit( int new_limit );
+    double& backx();
+    double& backy();
+    ~wxPlotCircularBuffer();
 };
 
 // ----------------------------------------------------------------------------
