@@ -3,8 +3,8 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="scrard" />
-		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
+		<Option makefile_is_custom="1" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Release">
@@ -17,6 +17,9 @@
 		<Unit filename="AsyncSerial.cpp" />
 		<Unit filename="AsyncSerial.h" />
 		<Unit filename="Makefile" />
+		<Unit filename="bin/Release/scrard.ini" />
+		<Unit filename="iniprocessor.cpp" />
+		<Unit filename="iniprocessor.h" />
 		<Unit filename="scrard.ino" />
 		<Unit filename="scrard.xpm" />
 		<Unit filename="wxBoostSerial.cpp" />
@@ -25,6 +28,8 @@
 		<Unit filename="xApp.h" />
 		<Unit filename="xComPort.cpp" />
 		<Unit filename="xComPort.h" />
+		<Unit filename="xConfigManager.cpp" />
+		<Unit filename="xConfigManager.h" />
 		<Unit filename="xFrame.cpp" />
 		<Unit filename="xFrame.h" />
 		<Unit filename="xLogger.h" />
@@ -34,11 +39,9 @@
 		<Unit filename="xScratchClient.h" />
 		<Extensions>
 			<code_completion>
-				<search_path add="${YWX}/lib/gcc_lib/mswu" />
-				<search_path add="${YWX}/include" />
+				<search_path add="${YWXI1}" />
+				<search_path add="${YWXI2}" />
 			</code_completion>
-			<envvars />
-			<debugger />
 			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>

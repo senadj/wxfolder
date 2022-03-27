@@ -40,7 +40,7 @@
 #include "wx/cursor.h"
 #endif
 
-#include "mathplot.h"
+#include <wx/mathplot.h>
 #include <wx/bmpbuttn.h>
 #include <wx/module.h>
 #include <wx/msgdlg.h>
