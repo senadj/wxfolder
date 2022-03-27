@@ -2,7 +2,6 @@
 #include <wx/panel.h>
 #include <wx/dynarray.h>
 #include <wx/textctrl.h>
-//class wxTextCtrl;
 
 WX_DEFINE_ARRAY(wxObject*, wxObjectArray);
 
@@ -33,6 +32,7 @@ public:
     void OnSerialUpdate(wxString& pData);
     bool IsAnalogReadable(int pin);
     bool IsAnalogWriteable(int pin);
+    bool IsCustomWriteable(int pin);
     void TogglePush(GridLineMeta& pline,wxString bname);
     void SetOutputFromExternal(int pin, int value);
     void LedON(GridLineMeta* pline);
@@ -40,9 +40,6 @@ public:
     void SetInputFromExternal(int pin, char state); // d | a
     void SetAlias(int pin);
     void HideRow(int pin);
-
-
-
 
 //protected:
     wxArrayString m_cols;

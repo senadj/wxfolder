@@ -14,7 +14,9 @@ class xComPort
 #endif
 public:
 
-    wxString m_cmdport; // port set as command line argument
+    wxString m_port;
+    wxString m_baudrate;
+
 	KVType vPorts;
 	std::vector<size_t > vBestPortIdx;
 

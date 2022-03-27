@@ -30,7 +30,7 @@ void wxBoostSerial::open(wxString devname, unsigned int baudrate)
         pimpl->serial.open(devname.ToStdString(),baudrate);
     } catch(boost::system::system_error&)
     {
-        //Errors during open
+        wxLogError(" opening COM port: " + devname + " @" + wxString::Format("%d",baudrate ) );//Errors during open
     }
     pimpl->serial.setCallback(bind(&wxBoostSerial::readCallback,this, _1, _2));
 }

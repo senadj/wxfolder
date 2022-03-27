@@ -5,16 +5,27 @@
 #include "xComPort.h"
 #include "xLogger.h"
 #include "xScratchClient.h"
+#include <wx/stdpaths.h>
 #include <wx/cmdline.h>
 
 static const wxCmdLineEntryDesc g_cmdLineDesc [] =
 {
-    { wxCMD_LINE_OPTION, "s", "serial" , "serial port name" },
+    { wxCMD_LINE_OPTION, "p", "port" , "serial port name" },
+    { wxCMD_LINE_OPTION, "b", "baudrate" , "serial port baudrate" },
+    { wxCMD_LINE_OPTION, "h", "hide" , "hide pins" },
     { wxCMD_LINE_PARAM, NULL, NULL, "params", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL|wxCMD_LINE_PARAM_MULTIPLE  }, // app.exe 1 2 3
     { wxCMD_LINE_NONE }
 };
 
-xApp::xApp() : wxApp(), m_serial(NULL), m_ping(false) {}
+xApp::xApp() : wxApp(), m_serial(NULL), m_ping(false)
+{
+    //InitBase();
+    m_base = wxFileName( wxStandardPaths::Get().GetExecutablePath() ).GetPath( wxPATH_GET_VOLUME|wxPATH_NO_SEPARATOR );
+    m_basewsep = m_base + wxFileName::GetPathSeparator();
+    m_inifile = m_basewsep + GetAppName().Append(".ini");
+
+    //inip.ProcessFile();
+}
 
 void xApp::ArduinoPinsUpdate()
 {
@@ -49,7 +60,7 @@ void xApp::ArduinoPinsUpdate()
 }
 
 
-bool xApp::ProcessCmdLine (wxChar** argv, int argc, wxString& port)
+bool xApp::ProcessCmdLine (wxChar** argv, int argc, wxString& hidepins)
 {
     wxCmdLineParser parser (argc, argv);
     parser.SetDesc(g_cmdLineDesc);
@@ -66,7 +77,9 @@ bool xApp::ProcessCmdLine (wxChar** argv, int argc, wxString& port)
             if ( argc > 1 )
            {
                 long pinId;
-                if ( parser.Found( "s" , &port) ) {} // wxLogMessage("s: " + port);
+                if ( parser.Found( "p" , &m_com->m_port) ) {} // wxLogMessage("s: " + port);
+                if ( parser.Found( "b" , &m_com->m_baudrate) ) {}
+                if ( parser.Found( "h" , &hidepins) ) {}
 
                 for (size_t i=0; i < parser.GetParamCount(); i++)
                 {
@@ -105,6 +118,8 @@ void xApp::OnTimer(wxTimerEvent& event )
 {
     if (m_ping)
     {
+        this->ArduinoPinsData(m_pins_init);
+
         if ( !m_tcp->IsOk() )
             m_tcp->Connect();
     }
@@ -115,25 +130,149 @@ void xApp::OnTimer(wxTimerEvent& event )
     }
 }
 
+void xApp::OpenComPort()
+{
+    long baudrate;
+    wxString& comport = m_com->m_port;
+    wxString& combaudrate = m_com->m_baudrate;
+
+    if ( comport.IsEmpty() )
+        comport = m_cfg_mgr->ReadEntry("/port", wxEmptyString);
+
+    if ( combaudrate.IsEmpty() )
+        combaudrate = m_cfg_mgr->ReadEntry("/baudrate","115200");
+
+    if ( !combaudrate.ToLong(&baudrate) )
+    {
+        combaudrate = "115200";
+        baudrate = 115200;
+    }
+
+
+    if ( !comport.IsEmpty() )
+    {
+        wxLogMessage( "Connecting "  + comport + " @" + combaudrate + " ..." );
+        m_serial->open(comport, baudrate);
+    }
+    else if ( m_com->GetBestPort(comport) )
+    {
+        wxLogMessage( "AutoConnecting Best Port "  + comport + " @" + combaudrate + " ..." );
+        m_serial->open(comport, baudrate);
+    }
+    else
+    {
+        if (m_com->vPorts.size()>0)
+            comport = m_com->vPorts[m_com->vPorts.size()-1].second;
+        wxLogMessage( "Blindly AutoConnecting " + comport + " @" + combaudrate + " ..." );
+        m_serial->open(comport, baudrate);
+    }
+
+    if ( !m_serial->isOpen() )  // wxLogError is called from wxBoostSerial.cpp
+    {
+        if ( !m_com->vPorts.empty() )
+            wxLogMessage( "Suggestions:" );
+        for (KVType::const_iterator it=m_com->vPorts.begin(); it != m_com->vPorts.end(); ++it )
+            wxLogMessage( (*it).first + " " + (*it).second );
+    }
+
+    if ( !m_serial->errorStatus() && m_serial->isOpen() )
+        wxLogMessage("Serial Port Connected.");
+
+    m_timer.StartOnce(0);
+}
+
+//#include "wx/msgdlg.h"
 bool xApp::OnInit ()
 {
-    m_pincnt = 20; // arduino uno pin count
+    m_cfg_mgr = new xConfigManager( m_inifile );
+
+    long pincnt;
+    wxString sval = m_cfg_mgr->ReadEntry("/pins","20");
+    if(!sval.ToLong(&pincnt)) {}
+
+    m_pincnt = pincnt; // arduino uno pin count
     //m_pincnt = 70; // arduino mega pin count
     m_buff4arduino.resize(m_pincnt);
     m_flag4arduino.resize(m_pincnt);
     m_buff4scratch.resize(m_pincnt);
     m_flag4scratch.resize(m_pincnt);
     m_writetype4arduino.resize(m_pincnt);
+    m_inipincfg.resize(m_pincnt);
+    m_inipincmd.resize(m_pincnt);
+    m_inipinval.resize(m_pincnt);
 
     // Serial
     m_com = new xComPort();
-    wxString comport;
+    wxString hidepins;
 
-   if (!ProcessCmdLine(argv, argc, comport))
+    if ( !ProcessCmdLine(argv, argc, hidepins) )
         return false;
-    else
-        m_com->m_cmdport = comport;
 
+
+    // Process Pins Init Config Entries
+    for ( int pin=0; pin < m_pincnt; pin++ )
+    {
+        wxString pinKey = "/pin" + wxString::Format("%d",pin);
+        int pinAlt = pin + 63;
+        if ( m_cfg_mgr->HasEntry(pinKey) )
+        {
+            wxString pinConfigLine = m_cfg_mgr->ReadEntry(pinKey,wxEmptyString);
+            if ( !pinConfigLine.IsEmpty() )
+            {
+                wxArrayString tokens1 = wxSplit(pinConfigLine,';');
+                for (wxArrayString::const_iterator it=tokens1.begin(); it!=tokens1.end(); ++it)
+                {
+                    wxString part1 = *it;
+                    wxString part2 = "";
+                    part1.Replace(' ',wxEmptyString,true);
+                    if ( part1.Find("(") != wxNOT_FOUND ) // for example digitalWrite(HIGH), SERVO(0-180)
+                    {
+                        wxArrayString tokens2 = wxSplit(part1,'(');
+                        part1 = tokens2.Item(0);
+                        part2 = tokens2.Item(1);
+                        part2.Replace(')',wxEmptyString,true);
+                    }
+
+                    if ( part1.IsSameAs("INPUT") ) { m_inipincfg[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'I')); }
+                    else if ( part1.IsSameAs("INPUT_PULLUP") ) { m_inipincfg[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'P')); }
+                    else if ( part1.IsSameAs("OUTPUT") ) { m_inipincfg[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'O')); }
+                    else if ( part1.IsSameAs("SERVO") ) { m_inipincfg[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'S')); }
+                    else if ( part1.IsSameAs("CUSTOM") ) { m_inipincfg[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'C')); }
+                    else if ( part1.IsSameAs("digitalRead") ) { m_inipincmd[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'D')); }
+                    else if ( part1.IsSameAs("analogRead") ) { m_inipincmd[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'A')); }
+                    else if ( part1.IsSameAs("digitalWrite") ) { m_inipincmd[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'W')); }
+                    else if ( part1.IsSameAs("analogWrite") ) { m_inipincmd[pin]=part1; m_pins_init.push_back(std::make_pair(pinAlt,'U')); }
+                    else if ( !m_inipincfg[pin].IsEmpty() && m_inipincmd[pin].IsEmpty() ) m_inipincmd[pin]=part1; // servo.write for example
+
+                    if ( !part2.IsEmpty() )
+                    {
+                        long val1, val2;
+
+                        if ( part2.IsSameAs("LOW") ) { m_inipinval[pin]=0; m_pins_init.push_back(std::make_pair(pin,0)); }
+                        else if ( part2.IsSameAs("HIGH") ) { m_inipinval[pin]=1; m_pins_init.push_back(std::make_pair(pin,1)); }
+                        else if ( part2.Find("-") != wxNOT_FOUND )  // SERVO(0-180)
+                        {
+                            wxArrayString tokens3 = wxSplit(part2,'-');
+                            if ( tokens3.GetCount() == 2 )
+                            {
+                                if ( tokens3.Item(0).ToLong(&val1) && tokens3.Item(1).ToLong(&val2) )
+                                    m_slider_limits[pin] = std::make_pair(val1,val2);
+                                    //wxLogMessage(part1 + " " + wxString::Format("%d",val1) + ":" + wxString::Format("%d",val2));
+                            }
+                        }
+                        else if ( part2.ToLong(&val1) )
+                                if ( val1 >= 0 && val1 <= 255 )
+                                {
+                                    m_inipinval[pin]=val1;
+                                    m_pins_init.push_back(std::make_pair(pin,val1));
+                                }
+                    }
+                }
+            }
+        }
+    }
+
+    m_hidepins = hidepins.IsEmpty() ? m_cfg_mgr->ReadEntry("/hide", wxEmptyString) : hidepins;
 
 
     for ( int i=0; i < m_pincnt; i++ )
@@ -145,61 +284,31 @@ bool xApp::OnInit ()
         if ( m_pin2alias.find(i) != m_pin2alias.end() )
             continue;
 
-        wxString pinalias = "pin"+wxString::Format("%i",i);
+        wxString pinalias = "pin" + wxString::Format("%i",i);
+        if ( i>13 && i<20)
+            pinalias = "A" + wxString::Format("%i",i-14);
+        //else             pinalias = wxString::Format("%i",i);
         m_alias2pin[pinalias] = i;
         m_pin2alias[i] = pinalias;
     }
 
-    //m_alias4pin["a2"]="4";
-
     m_frame = new xFrame();
-    m_logger = new xLogger(m_frame);
-
-    for ( int i=0;i<m_pincnt;i++ )
-        m_frame->m_panel->SetAlias(i);
+    //m_logger = new xLogger(m_frame);
 
     m_frame->Center();
     m_frame->Show();
 
-    if ( !comport.IsEmpty() )
-    {
-        AppendInfo( "Connecting "  + comport + " ..." );
-        m_serial = new wxBoostSerial(comport,115200);
-    }
-    else if ( m_com->GetBestPort(comport) )
-    {
-        AppendInfo( "AutoConnecting Best Port "  + comport + " ..." );
-        m_serial = new wxBoostSerial(comport,115200);
-    }
-    else
-    {
-        if (m_com->vPorts.size()>0)
-            comport = m_com->vPorts[m_com->vPorts.size()-1].second;
-        AppendInfo( "Blindly AutoConnecting " + comport +" ..." );
-        m_serial = new wxBoostSerial(comport,115200);
-    }
-
-    if ( !m_serial->isOpen() )
-    {
-        AppendInfo( "Serial (Arduino) connection failed." );
-        for (KVType::const_iterator it=m_com->vPorts.begin(); it != m_com->vPorts.end(); ++it )
-        {
-            AppendInfo( (*it).first + " " + (*it).second );
-        }
-    }
-
-    if ( !m_serial->errorStatus() && m_serial->isOpen() )
-    {
-        AppendInfo( "Connected.\n" );
-    }
-
-    // TCP
-    m_tcp = new xScratchClient();
-    //m_tcp->Connect();
+    // Serial
+    m_serial = new wxBoostSerial();
 
     m_timer.SetOwner(this);
     Bind( wxEVT_TIMER, &xApp::OnTimer, this );
-    m_timer.StartOnce(0);
+
+    // TCP
+    wxSocketBase::Initialize();
+    m_tcp = new xScratchClient();
+
+    CallAfter(&xApp::OpenComPort);
 
     return true ;
 }
@@ -211,15 +320,9 @@ int xApp::FilterEvent(wxEvent& evt)
     {
         wxString str = wxStaticCast( &evt, wxThreadEvent )->GetString() + '\n';
         m_frame->OnSerialUpdate(str);
-        m_tcp->ScratchUpdate();
+        m_tcp->ScratchUpdate(); // checks if tcp->IsOk()
     }
     return -1;
-}
-
-
-void xApp::AppendInfo(const wxString& pinfo)
-{
-    m_frame->m_panel->m_tctl->AppendText(pinfo+'\n');
 }
 
 void xApp::SetScratchInfo(const wxString& pinfo)
@@ -279,13 +382,13 @@ void xApp::ArduinoPinData(int pin, int val)
 void xApp::ArduinoPinsData( std::vector<std::pair<int,int>>& vPinVals )
 {
     char buffer [3];
-    wxString pinvalhex;
+    wxString pinvalhex = wxEmptyString;
     int msglen = 0;
 
     for (std::vector<std::pair<int,int>>::const_iterator it = vPinVals.begin(); it!=vPinVals.end(); ++it)
     {
         snprintf ( buffer, 3, "%02x", (*it).first );
-        pinvalhex = wxString(buffer);
+        pinvalhex.Append(wxString(buffer));
         snprintf ( buffer, 3, "%02x", (*it).second );
         pinvalhex.Append(wxString(buffer));
 
@@ -368,6 +471,7 @@ int xApp::OnExit()
     wxDELETE(m_serial);
     wxDELETE(m_tcp);
     wxDELETE(m_com);
+    wxDELETE(m_cfg_mgr);
     return 0;
 }
 

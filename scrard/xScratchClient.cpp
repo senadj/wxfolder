@@ -1,6 +1,5 @@
 #include "xApp.h"
 #include "xScratchClient.h"
-#include <wx/log.h>
 
 xScratchClient::xScratchClient() : wxSocketClient() { m_handler = new xSocketHandler(*this); }
 xScratchClient::~xScratchClient() { wxDELETE(m_handler); }
@@ -11,6 +10,7 @@ bool xScratchClient::Connect()
     addr.Hostname("127.0.0.1");
     addr.Service("42001");
     wxSocketClient::Connect(addr);
+    // blocks app without scratch: while ( !WaitOnConnect(1) ) {}
 }
 
 void UpdateArduinoBuffer(wxString& pSensorId, wxString pValue)
@@ -151,7 +151,7 @@ xSocketHandler::xSocketHandler(xScratchClient& pClient) : m_client(pClient)
     Bind(wxEVT_SOCKET,&xSocketHandler::OnSocketEvent,this);
 
     m_client.SetEventHandler(*this,1);
-    m_client.SetNotify( wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG | wxSOCKET_CONNECTION_FLAG );
+    m_client.SetNotify( wxSOCKET_INPUT_FLAG|wxSOCKET_LOST_FLAG|wxSOCKET_CONNECTION_FLAG );
     m_client.Notify(true);
 }
 
@@ -197,20 +197,16 @@ void xSocketHandler::OnSocketEvent(wxSocketEvent& ev)
             OnSocketConnection(); break;
 
         case wxSOCKET_LOST:
-            OnSocketLost(); break;
+            wxLogMessage("TCP Socket lost."); break;
     }
-}
-
-void xSocketHandler::OnSocketLost()
-{
-    wxGetApp().AppendInfo("TCP Connection Lost");
 }
 
 
 void xSocketHandler::OnSocketConnection()
 {
     wxGetApp().ArduinoCommand(0,0); // make arduino flush buffer
-    wxGetApp().AppendInfo("Scratch connected.");
+    wxLogMessage("Scratch connected.");
+
 /*
     wxString msg = "sensor-update p28 288 \"p29 kk\" 299 zz 22";
 

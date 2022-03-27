@@ -1,16 +1,18 @@
 #include "xApp.h"
 #include "xPanel.h"
+#include <wx/log.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/tglbtn.h>
 #include <wx/textctrl.h>
 #include <wx/stattext.h>
-#include <wx/stattext.h>
+#include <wx/statbox.h>
 #include <wx/slider.h>
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>
 #include <wx/hashset.h>
 #include <wx/clntdata.h>
+#include <wx/tokenzr.h>
 #include <wx/awx/led.h>
 
 xPanel::~xPanel() { wxDELETEA(m_pins); }
@@ -19,8 +21,10 @@ xPanel::~xPanel() { wxDELETEA(m_pins); }
 WX_DECLARE_HASH_SET( int, wxIntegerHash, wxIntegerEqual, IntegerHashSetType );
 static IntegerHashSetType anReadPins;
 static IntegerHashSetType anWritePins;
+static IntegerHashSetType customWritePins;
 bool xPanel::IsAnalogReadable(int pin) {return anReadPins.find(pin) != anReadPins.end();}
 bool xPanel::IsAnalogWriteable(int pin) {return anWritePins.find(pin) != anWritePins.end();}
+bool xPanel::IsCustomWriteable(int pin) {return customWritePins.find(pin) != customWritePins.end();}
 
 void xPanel::TogglePush(GridLineMeta& pline,wxString bname)
 {
@@ -115,7 +119,7 @@ void xPanel::SetOutputFromExternal(int pin, int value)
         }
     }
 
-    if ( wxGetApp().m_writetype4arduino[pin] == ANALOGWRITE )
+    if ( wxGetApp().m_writetype4arduino[pin] == ANALOGWRITE || wxGetApp().m_writetype4arduino[pin] == CUSTOMWRITE )
     {
         wxSlider* slider = wxDynamicCast(line.pobjs.Item(m_mapc["analogWriteValue"]),wxSlider);
         if (slider)
@@ -135,7 +139,7 @@ void xPanel::SetOutputFromExternal(int pin, int value)
 
 void xPanel::SetAlias(int pin)
 {
-    wxStaticCast(m_pins[pin].pobjs.Item(m_mapc["alias"]),wxStaticText)->SetLabelText(wxGetApp().m_pin2alias[pin]);;
+    wxStaticCast(m_pins[pin].pobjs.Item(m_mapc["alias"]),wxStaticText)->SetLabelText(wxGetApp().m_pin2alias[pin]);
 }
 
 xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
@@ -160,167 +164,189 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
         m_mapc[m_cols[k]] = k;
 
     // Uno
-    anReadPins.insert(14);
-    anReadPins.insert(15);
-    anReadPins.insert(16);
-    anReadPins.insert(17);
-    anReadPins.insert(18);
-    anReadPins.insert(19);
+    for (auto it: wxSplit( wxGetApp().m_cfg_mgr->ReadEntry("/analogRead","14,15,16,17,18,19"),','))
+        anReadPins.insert(std::stoi(it.ToStdString()));
 
     // PWM
-    anWritePins.insert(3);
-    anWritePins.insert(5);
-    anWritePins.insert(6);
-    anWritePins.insert(9);
-    anWritePins.insert(10);
-    anWritePins.insert(11);
+    for (auto it: wxSplit( wxGetApp().m_cfg_mgr->ReadEntry("/analogWrite","3,5,6,9,10,11"),','))
+        anWritePins.insert(std::stoi(it.ToStdString()));
 
-/*
-    //MEGA     app.m_pincnt=70
+    for (int cpin=0; cpin < wxGetApp().m_pincnt; cpin++)
+        if ( wxGetApp().m_inipincfg[cpin].IsSameAs("CUSTOM") || wxGetApp().m_inipincfg[cpin].IsSameAs("SERVO") )
+            customWritePins.insert(cpin);
 
-    anReadPins.insert(54);
-    anReadPins.insert(55);
-    anReadPins.insert(56);
-    anReadPins.insert(57);
-    anReadPins.insert(58);
-    anReadPins.insert(59);
-    anReadPins.insert(60);
-    anReadPins.insert(61);
-    anReadPins.insert(62);
-    anReadPins.insert(63);
-    anReadPins.insert(64);
-    anReadPins.insert(65);
-    anReadPins.insert(66);
-    anReadPins.insert(67);
-    anReadPins.insert(68);
-    anReadPins.insert(69);
-
-
-    anWritePins.insert(2);
-    anWritePins.insert(3);
-    anWritePins.insert(4);
-    anWritePins.insert(5);
-    anWritePins.insert(6);
-    anWritePins.insert(7);
-    anWritePins.insert(8);
-    anWritePins.insert(9);
-    anWritePins.insert(10);
-    anWritePins.insert(11);
-    anWritePins.insert(12);
-    anWritePins.insert(13);
-    anWritePins.insert(44);
-    anWritePins.insert(45);
-    anWritePins.insert(46);
-    */
 
     wxBoxSizer* vboxsz = new wxBoxSizer(wxVERTICAL);
     wxFlexGridSizer* sizer = new wxFlexGridSizer( m_cols.GetCount(), 0, 0 );
     m_pins = new GridLineMeta[ wxGetApp().m_pincnt ];
 
+    wxSize basePinFieldSize;
 
 	for ( int i=0; i < wxGetApp().m_pincnt; i++ )
     {
         m_pins[i].pin = i;
+        wxString& inipincfg = wxGetApp().m_inipincfg[i];
+        wxString& inipincmd = wxGetApp().m_inipincmd[i];
 
-        for (int j=0; j < sizer->GetCols(); j++)
+        for ( int j=0; j < sizer->GetCols(); j++ )
         {
-            if ( m_cols[j].IsSameAs("pin") )
+            wxString& ccol = m_cols[j]; // current column
+            wxString textlabel = ccol;
+            wxString createwidget = wxEmptyString;
+
+            if ( ccol.IsSameAs("pin") )
             {
-                wxStaticText* text = new wxStaticText (this,wxID_ANY,"pin" + wxString::Format("%i",i));
+                wxStaticText* text = new wxStaticText (this,wxID_ANY,"pin" + wxString::Format("%i",i),wxDefaultPosition,wxDefaultSize,wxALIGN_CENTRE_HORIZONTAL);
+                basePinFieldSize.SetWidth(text->GetSize().GetWidth() * 1.4);
+                basePinFieldSize.SetHeight(text->GetSize().GetHeight());
                 text->SetClientData((void*)&m_pins[i]);
                 m_pins[i].pobjs.Add((wxObject*)text);
-                sizer->Add(text);
+                sizer->Add(text,wxSizerFlags().Expand().Center().Border(wxALL,5).FixedMinSize());
             }
-            else if (  m_cols[j].IsSameAs("INPUT") || m_cols[j].IsSameAs("INPUT_PULLUP")
-                    || m_cols[j].IsSameAs("OUTPUT")
-                    || m_cols[j].IsSameAs("digitalWrite") || m_cols[j].IsSameAs("digitalRead")
-                    || m_cols[j].IsSameAs("LOW") || m_cols[j].IsSameAs("HIGH"))
+            else if ( IsCustomWriteable(i) &&
+                       ! ( ccol.IsSameAs("analogWrite")
+                        || ccol.IsSameAs("analogWriteValue")
+                        || ccol.IsSameAs("external")
+                        || ccol.IsSameAs("alias") ) )
             {
-                wxToggleButton* tbutton = new wxToggleButton (this,wxID_ANY,m_cols[j]);
-                tbutton->SetClientData((void*)&m_pins[i]);
-                m_pins[i].pobjs.Add((wxObject*)tbutton);
-                sizer->Add(tbutton);
-
-                if ( !(m_cols[j].IsSameAs("INPUT") || m_cols[j].IsSameAs("INPUT_PULLUP") || m_cols[j].IsSameAs("OUTPUT")) )
-                    tbutton->Disable();
+                createwidget = "Window";
             }
-            else if ( m_cols[j].IsSameAs("analogWrite") )
+            else if ( ccol.IsSameAs("INPUT") || ccol.IsSameAs("INPUT_PULLUP") || ccol.IsSameAs("OUTPUT") )
             {
-                if ( IsAnalogWriteable(i) )
+                if (  !inipincfg.IsEmpty() && !ccol.IsSameAs(inipincfg) ) createwidget = "Window";
+                else if ( ccol.IsSameAs(inipincfg) ) createwidget = "Button";
+                else createwidget = "ToggleButton";
+            }
+            else if ( ccol.IsSameAs("digitalRead") || ccol.IsSameAs("analogRead") )
+            {
+                if (  !inipincfg.IsEmpty() && !inipincfg.StartsWith("INPUT") ) createwidget = "Window";
+                else if ( ccol.IsSameAs("analogRead") && !IsAnalogReadable(i) ) createwidget = "Window";
+                else if ( ccol.IsSameAs("analogRead") && inipincmd.IsSameAs("digitalRead") ) createwidget = "Window";
+                else if ( ccol.IsSameAs("digitalRead") && inipincmd.IsSameAs("analogRead") ) createwidget = "Window";
+                else if ( ccol.IsSameAs(inipincmd) ) createwidget = "Button";
+                else createwidget = inipincfg.IsEmpty() ? "ToggleButtonDisable" : "ToggleButton";
+            }
+            else if ( ccol.IsSameAs("ReadValue") )
+            {
+                textlabel = '-';
+                if (  !inipincfg.IsEmpty() && !inipincfg.StartsWith("INPUT") ) createwidget = "Window";
+                else if ( inipincmd.Find("Read") != wxNOT_FOUND ) createwidget = "StaticText Resize";
+                else createwidget = "StaticText Disable Resize";
+            }
+            else if ( ccol.IsSameAs("digitalWrite") )
+            {
+                if (  !inipincfg.IsEmpty() && !( inipincfg.IsSameAs("OUTPUT") ) ) createwidget = "Window";
+                else if ( inipincmd.IsSameAs("analogWrite") ) createwidget = "Window";
+                else if ( ccol.IsSameAs(inipincmd) ) createwidget = "Button";
+                else createwidget = inipincfg.IsEmpty() ? "ToggleButtonDisable" : "ToggleButton";
+            }
+            else if ( ccol.IsSameAs("LOW") || ccol.IsSameAs("HIGH") )
+            {
+                if (  !inipincfg.IsEmpty() && !( inipincfg.IsSameAs("OUTPUT") ) ) createwidget = "Window";
+                else if ( inipincmd.IsSameAs("analogWrite") ) createwidget = "Window";
+                else if ( inipincmd.IsSameAs("digitalWrite") )
                 {
-                    wxToggleButton* tbutton = new wxToggleButton (this,wxID_ANY,m_cols[j]);
-                    tbutton->SetClientData((void*)&m_pins[i]);
-                    m_pins[i].pobjs.Add((wxObject*)tbutton);
-                    sizer->Add(tbutton);
-                    tbutton->Disable();
+                    if ( ccol.IsSameAs("LOW") && wxGetApp().m_inipinval[i] == 0 ) createwidget = "ToggleButton True";
+                    else if ( ccol.IsSameAs("HIGH") && wxGetApp().m_inipinval[i] == 1 ) createwidget = "ToggleButton True";
+                    else createwidget = "ToggleButton";
                 }
-                else { sizer->Add(new wxWindow()); m_pins[i].pobjs.Add((wxObject*)NULL); }
+                else createwidget = inipincfg.IsEmpty() ? "ToggleButtonDisable" : inipincmd.IsEmpty() ? "ToggleButtonDisable" : "ToggleButton";
             }
-            else if ( m_cols[j].IsSameAs("analogWriteValue") )
+            else if ( ccol.IsSameAs("analogWrite") )
             {
-                if ( IsAnalogWriteable(i) )
+                if ( IsCustomWriteable(i) ) { textlabel = inipincmd.IsEmpty() ? "[ ? ]" : inipincmd; createwidget = "StaticText"; }
+                else if (  !inipincfg.IsEmpty() && !( inipincfg.IsSameAs("OUTPUT") ) ) createwidget = "Window";
+                else if ( !IsAnalogWriteable(i) || inipincmd.IsSameAs("digitalWrite") ) createwidget = "Window";
+                else if ( ccol.IsSameAs(inipincmd) ) createwidget = "Button";
+                else createwidget = inipincfg.IsEmpty() ? "ToggleButtonDisable" : "ToggleButton";
+            }
+            else if ( ccol.IsSameAs("analogWriteValue") )
+            {
+                if ( IsAnalogWriteable(i) || IsCustomWriteable(i) )
                 {
-                    wxSlider* slider = new wxSlider (this,wxID_ANY,50, 0, 255,wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS);
-                    slider->SetValue(0);
+                    int smin = 0;
+                    int smax = 255;
+                    if ( wxGetApp().m_slider_limits.find(i) != wxGetApp().m_slider_limits.end() )
+                    {
+                        smin = wxGetApp().m_slider_limits[i].first;
+                        smax = wxGetApp().m_slider_limits[i].second;
+                    }
+                    wxSlider* slider = new wxSlider (this,wxID_ANY, 0, smin, smax, wxDefaultPosition, wxSize(170,44), wxSL_HORIZONTAL|wxSL_LABELS);
                     slider->SetLineSize(255);
                     slider->SetClientData((void*)&m_pins[i]);
                     m_pins[i].pobjs.Add((wxObject*)slider);
 
                     slider->Bind(wxEVT_SLIDER, &xPanel::OnScroll, this);
-                    sizer->Add(slider);
-                    slider->Disable();
-                }
-                else { sizer->Add(new wxWindow()); m_pins[i].pobjs.Add((wxObject*)NULL); }
-            }
-            else if ( m_cols[j].IsSameAs("analogRead") )
-            {
-                if ( IsAnalogReadable(i) )
-                {
-                    wxToggleButton* tbutton = new wxToggleButton (this,wxID_ANY,m_cols[j]);
-                    tbutton->SetClientData((void*)&m_pins[i]);
-                    m_pins[i].pobjs.Add((wxObject*)tbutton);
-                    sizer->Add(tbutton);
-                    tbutton->Disable();
-                }
-                else { sizer->Add(new wxWindow()); m_pins[i].pobjs.Add((wxObject*)NULL); }
+                    sizer->Add(slider,wxALIGN_TOP);
 
+                    if ( wxGetApp().m_inipinval[i] > 0 )
+                        slider->SetValue(wxGetApp().m_inipinval[i]);
+
+                    if ( !IsCustomWriteable(i) && !inipincmd.IsSameAs("analogWrite") )
+                        slider->Disable();
+                }
+                else
+                    createwidget = "Window";
             }
-            else if ( m_cols[j].IsSameAs("ReadValue") || m_cols[j].IsSameAs("alias"))
+            else if ( ccol.IsSameAs("alias"))
             {
-                //wxTextCtrl* tctl = new wxTextCtrl (this,wxID_ANY,m_cols[j]);
-                wxStaticText* tctl = new wxStaticText (this,wxID_ANY,m_cols[j]);
-                tctl->SetClientData((void*)&m_pins[i]);
-                m_pins[i].pobjs.Add((wxObject*)tctl);
-                sizer->Add(tctl);
-                if (m_cols[j].IsSameAs("ReadValue"))
-                    tctl->Disable();
+                textlabel = wxGetApp().m_pin2alias[i]; // "ho"; // + wxString::Format("%d",i);
+                createwidget = "StaticText Resize";
+                //createwidget = "Button";
             }
-            else if ( m_cols[j].IsSameAs("external") )
+            else if ( ccol.IsSameAs("external") )
             {
                 awxLed* awx = new awxLed( this, wxID_ANY );
                 awx->SetColour( awxLED_YELLOW );
                 awx->SetState( awxLED_OFF );
                 awx->SetClientData((void*)&m_pins[i]);
                 m_pins[i].pobjs.Add((wxObject*)awx);
-                sizer->Add(awx,1,wxALL|wxEXPAND,5);
-
-                //wxTextCtrl* tctl = new wxTextCtrl (this,wxID_ANY,m_cols[j]);
-                //wxStaticText* tctl = new wxStaticText (this,wxID_ANY,m_cols[j]);
-                /*
-                wxCheckBox* cbox = new wxCheckBox(this,wxID_ANY,wxEmptyString);
-                cbox->SetClientData((void*)&m_pins[i]);
-                m_pins[i].pobjs.Add((wxObject*)cbox);
-                sizer->Add(cbox, 1, wxALIGN_CENTER|wxALIGN_CENTER_VERTICAL);
-                cbox->Disable();
-                */
+                //sizer->Add(awx,1,wxALL|wxEXPAND,5);
+                sizer->Add(awx,wxSizerFlags().Expand().Center());
             }
             else
-            {
-                sizer->Add(new wxWindow());
-            }
+                //sizer->Add(new wxWindow()); m_pins[i].pobjs.Add((wxObject*)NULL);
+                wxLogError("error" + ccol); // )if ( createwidget.IsEmpty() )                     sizer->Add(new wxWindow());
             //tb->Bind(wxEVT_TOGGLEBUTTON, &xPanel::OnClickToggleButton, this);
             //tb->Bind(wxEVT_TOGGLEBUTTON, &OnClickToggleButton, wxID_ANY, wxID_ANY, (wxObject*)glm);
             //sizer->Add(tb);
+
+            if ( createwidget.IsSameAs("Window") )
+            {
+                sizer->Add(new wxWindow()); m_pins[i].pobjs.Add((wxObject*)NULL);
+            }
+            else if ( createwidget.StartsWith("ToggleButton") )
+            {
+                wxToggleButton* tbutton = new wxToggleButton (this,wxID_ANY,ccol);
+                tbutton->SetClientData((void*)&m_pins[i]);
+                m_pins[i].pobjs.Add((wxObject*)tbutton);
+                sizer->Add(tbutton,wxSizerFlags().Expand().Center());
+                if ( createwidget.Find("True") != wxNOT_FOUND )
+                    tbutton->SetValue(true);
+                if ( createwidget.Find("Disable") != wxNOT_FOUND )
+                    tbutton->Disable();
+            }
+            else if ( createwidget.StartsWith("StaticText") )
+            {
+                wxStaticText* tctl = new wxStaticText (this,wxID_ANY,textlabel,wxDefaultPosition,wxDefaultSize,wxALIGN_CENTRE_HORIZONTAL);
+                if ( createwidget.Find("Resize") != wxNOT_FOUND )
+                    tctl->SetSize(wxSize(basePinFieldSize.GetWidth(), tctl->GetSize().GetHeight()));
+                tctl->SetClientData((void*)&m_pins[i]);
+                m_pins[i].pobjs.Add((wxObject*)tctl);
+                sizer->Add(tctl,wxSizerFlags().Expand().Center().FixedMinSize());
+                if ( createwidget.Find("Disable") != wxNOT_FOUND )
+                    tctl->Disable();
+            }
+            else if ( createwidget.IsSameAs("Button") )
+            {
+                wxButton* button = new wxButton (this,wxID_ANY,ccol);
+                button->SetForegroundColour(*wxBLACK);
+                button->SetBackgroundColour(*wxWHITE);
+                button->SetClientData((void*)&m_pins[i]);
+                m_pins[i].pobjs.Add((wxObject*)button);
+                sizer->Add(button,wxSizerFlags().Expand().Center());
+                button->Disable();
+            }
         }
 
         Bind( wxEVT_TOGGLEBUTTON, &xPanel::OnClickToggleButton, this );
@@ -328,10 +354,11 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
         //Bind( wxEVT_SLIDER, &xPanel::OnScroll, this );
     }
 
-	m_tctl = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxTE_MULTILINE | wxTE_RICH);
+    for (auto it: wxSplit( wxGetApp().m_hidepins,','))
+        HideRow(std::stoi(it.ToStdString()));
 
-	//HideRow(0);
-	//HideRow(1);
+	m_tctl = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxTE_MULTILINE | wxTE_RICH);
+	delete wxLog::SetActiveTarget(new wxLogTextCtrl(m_tctl));
 
 	vboxsz->Add(sizer,1,wxEXPAND);
 	//vboxsz->Add(new wxButton(this,wxID_ANY,"click"),1,wxEXPAND);

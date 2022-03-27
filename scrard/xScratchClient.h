@@ -26,5 +26,4 @@ public:
     xSocketHandler(xScratchClient& pClient);
     void OnSocketEvent(wxSocketEvent& ev);
     void OnSocketConnection();
-    void OnSocketLost();
 };
