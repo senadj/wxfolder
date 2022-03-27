@@ -3,6 +3,11 @@ CXXFLAGS="-std=gnu++0x -Wno-deprecated-declarations -Wno-attributes -DDLL_EXPORT
 cd $YWX/wxfolder
 for dir in `find . -name include`; do cp -R $dir/* `wx-config --prefix`/include/wx-`wx-config --release`; done
 
+cp $YWX/wxfolder/wxmathplot/mathplot.h `wx-config --prefix`/include/wx-`wx-config --release`"/wx/"
+cd $YWX/wxfolder/wxmathplot
+g++ $CXXFLAGS -Dmathplot_EXPORTS -c mathplot.cpp
+g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_mathplot-`wx-config --release`.so `wx-config --libs core`
+
 
 cd $YWX/wxfolder/wxjson/src
 g++ $CXXFLAGS -DWXMAKINGDLL_JSON -c *.cpp
@@ -28,4 +33,8 @@ g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_awx-`wx-co
 cd $YWX/wxfolder/wxbitz/src
 g++ $CXXFLAGS -DWXMAKINGDLL_BITZ -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_bitz-`wx-config --release`.so `wx-config --libs core`
+
+cd $YWX/wxfolder/wxmathplot/src
+g++ $CXXFLAGS -Dmathplot_EXPORTS -c *.cpp
+g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_mathplot-`wx-config --release`.so `wx-config --libs core`
 
