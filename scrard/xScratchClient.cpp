@@ -11,6 +11,7 @@ bool xScratchClient::Connect()
     addr.Service("42001");
     wxSocketClient::Connect(addr);
     // blocks app without scratch: while ( !WaitOnConnect(1) ) {}
+    return true;
 }
 
 void UpdateArduinoBuffer(wxString& pSensorId, wxString pValue)

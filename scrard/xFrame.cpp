@@ -3,7 +3,7 @@
 #include "xPanel.h"
 #include "scrard.xpm"
 
-xFrame::xFrame() : wxFrame(NULL,wxID_ANY,"ScrArd", wxDefaultPosition, wxSize(1100,850))
+xFrame::xFrame() : wxFrame(NULL,wxID_ANY,"ScrArd", wxDefaultPosition, wxDefaultSize/*wxSize(1000,850)*/)
 {
     m_panel = new xPanel(this);
     SetIcon(wxIcon(scrard_xpm));
