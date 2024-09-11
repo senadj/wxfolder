@@ -354,17 +354,24 @@ xPanel::xPanel(wxWindow* parent) : wxPanel(parent)
         //Bind( wxEVT_SLIDER, &xPanel::OnScroll, this );
     }
 
-    for (auto it: wxSplit( wxGetApp().m_hidepins,','))
-        HideRow(std::stoi(it.ToStdString()));
+    // Hide rows
+    wxArrayString hidden_pins = wxSplit( wxGetApp().m_hidepins,',');
+    unsigned long int hidepin;
+    for (auto it: hidden_pins)
+        if ( it.ToULong(&hidepin) )
+            if ( hidepin < wxGetApp().m_pincnt )
+                HideRow(hidepin);
+
 
 	m_tctl = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxTE_MULTILINE | wxTE_RICH);
 	delete wxLog::SetActiveTarget(new wxLogTextCtrl(m_tctl));
 
-	vboxsz->Add(sizer,1,wxEXPAND);
-	//vboxsz->Add(new wxButton(this,wxID_ANY,"click"),1,wxEXPAND);
-	vboxsz->Add(m_tctl,1,wxEXPAND);
+    m_tctl->SetMinSize(wxSize(sizer->GetSize().GetWidth(),120));
+    vboxsz->Add(sizer,wxSizerFlags().Expand()/*.Proportion(6)*/);
+    vboxsz->Add(m_tctl,wxSizerFlags().Expand()/*.Proportion(1)*/);
 
 	this->SetSizer(vboxsz);
+	vboxsz->SetSizeHints(parent); // set xFrame size
 }
 
 
