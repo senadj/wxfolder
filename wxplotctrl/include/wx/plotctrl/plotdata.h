@@ -155,7 +155,7 @@ public:
                    int options = wxPLOTDATA_LOAD_DEFAULT );
     // Save a data file
     bool SaveFile( const wxString &filename, bool save_header = false,
-                   const wxString &format=wxT("%g") );
+                   const wxString &format="%g" );
 
     // Get/Set the filename was used for LoadFile or a previous SetFilename (if any)
     wxString GetFilename() const;
@@ -180,7 +180,7 @@ public:
 
     // Use with static data. Dangerous unless you really know what you are doing
     void SetXYPointsData(double* x_data, double* y_data, int points);
-	
+
     // imaginary Y data, not normally created, but if !NULL then it will be free()ed, see FFT
     double *GetYiData() const;
     // use (double*)malloc(sizeof(double)*GetCount()) to create
@@ -436,7 +436,7 @@ bool wxClipboardSetPlotData(const wxPlotData& plotData);
 #include "wx/dataobj.h"
 
 //#define wxDF_wxPlotData (wxDF_MAX+1010)  // works w/ GTK 1.2 non unicode
-extern const wxChar* wxDF_wxPlotData;      // wxT("wxDF_wxPlotData");
+extern const wxChar* wxDF_wxPlotData;      // "wxDF_wxPlotData";
 
 class WXDLLIMPEXP_PLOTCTRL wxPlotDataObject : public wxTextDataObject
 {

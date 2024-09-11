@@ -67,7 +67,7 @@ wxObjectRefData *wxPlotFunction::CloneRefData(const wxObjectRefData *data) const
 
 bool wxPlotFunction::Create( const wxPlotFunction& curve )
 {
-    wxCHECK_MSG(curve.Ok(), false, wxT("invalid plot function"));
+    wxCHECK_MSG(curve.Ok(), false, "invalid plot function");
     UnRef();
     Ref(curve);
     return true;
@@ -88,7 +88,7 @@ int wxPlotFunction::Create(const wxString &function, const wxString &vars, bool 
     UnRef();
 
     m_refData = new wxPlotFuncRefData();
-    wxCHECK_MSG(m_refData, 0, wxT("can't allocate memory"));
+    wxCHECK_MSG(m_refData, 0, "can't allocate memory");
 
     int i = M_PLOTFUNCDATA->m_parser.Parse(function, vars, useDegrees);
 
@@ -100,7 +100,7 @@ int wxPlotFunction::Create(const wxString &function, const wxString &vars, bool 
 
 int wxPlotFunction::Parse(const wxString &function, const wxString &vars, bool useDegrees)
 {
-    wxCHECK_MSG(m_refData, 0, wxT("Invalid plotfunction"));
+    wxCHECK_MSG(m_refData, 0, "Invalid plotfunction");
 
     int i = M_PLOTFUNCDATA->m_parser.Parse(function, vars, useDegrees);
 
@@ -112,53 +112,53 @@ int wxPlotFunction::Parse(const wxString &function, const wxString &vars, bool u
 
 wxString wxPlotFunction::GetFunctionString() const
 {
-    wxCHECK_MSG(Ok(), wxEmptyString, wxT("invalid plotfunction"));
+    wxCHECK_MSG(Ok(), wxEmptyString, "invalid plotfunction");
     return M_PLOTFUNCDATA->m_parser.GetFunctionString();
 }
 wxString wxPlotFunction::GetVariableString() const
 {
-    wxCHECK_MSG(Ok(), wxEmptyString, wxT("invalid plotfunction"));
+    wxCHECK_MSG(Ok(), wxEmptyString, "invalid plotfunction");
     return M_PLOTFUNCDATA->m_parser.GetVariableString();
 }
 wxString wxPlotFunction::GetVariableName(size_t n) const
 {
-    wxCHECK_MSG(Ok(), wxEmptyString, wxT("invalid plotfunction"));
-    wxCHECK_MSG((int(n) < GetNumberVariables()), wxEmptyString, wxT("invalid variable index"));
+    wxCHECK_MSG(Ok(), wxEmptyString, "invalid plotfunction");
+    wxCHECK_MSG((int(n) < GetNumberVariables()), wxEmptyString, "invalid variable index");
     return M_PLOTFUNCDATA->m_parser.GetVariableName(n);
 }
 int wxPlotFunction::GetNumberVariables() const
 {
-    wxCHECK_MSG(Ok(), 0, wxT("Invalid plotfunction"));
+    wxCHECK_MSG(Ok(), 0, "Invalid plotfunction");
     return M_PLOTFUNCDATA->m_parser.GetNumberVariables();
 }
 
 bool wxPlotFunction::GetUseDegrees() const
 {
-    wxCHECK_MSG(m_refData, false, wxT("Invalid plotfunction"));
+    wxCHECK_MSG(m_refData, false, "Invalid plotfunction");
     return M_PLOTFUNCDATA->m_parser.GetUseDegrees();
 }
 
 wxString wxPlotFunction::GetErrorMsg() const
 {
-    wxCHECK_MSG(m_refData, wxEmptyString, wxT("Invalid plotfunction"));
+    wxCHECK_MSG(m_refData, wxEmptyString, "Invalid plotfunction");
     return M_PLOTFUNCDATA->m_parser.ErrorMsg();
 }
 
 double wxPlotFunction::GetY( double x ) const
 {
-    wxCHECK_MSG(Ok(), 0.0, wxT("invalid plotfunction"));
+    wxCHECK_MSG(Ok(), 0.0, "invalid plotfunction");
     return M_PLOTFUNCDATA->m_parser.Eval( &x );
 }
 
 double wxPlotFunction::GetValue( double *x ) const
 {
-    wxCHECK_MSG(Ok(), 0.0, wxT("invalid plotfunction"));
+    wxCHECK_MSG(Ok(), 0.0, "invalid plotfunction");
     return M_PLOTFUNCDATA->m_parser.Eval( x );
 }
 
 bool wxPlotFunction::AddConstant(const wxString& name, double value)
 {
-    wxCHECK_MSG(Ok(), false, wxT("invalid plotfunction"));
+    wxCHECK_MSG(Ok(), false, "invalid plotfunction");
     return M_PLOTFUNCDATA->m_parser.AddConstant(name, value);
 }
 
@@ -181,7 +181,7 @@ wxPlotFunction wxClipboardGetPlotFunction()
             wxTheClipboard->GetData(textDataObject))
         {
             wxString str = textDataObject.GetText();
-            plotFunc.Create(str.BeforeLast(wxT(';')), str.AfterLast(wxT(';')));
+            plotFunc.Create(str.BeforeLast(';'), str.AfterLast(';'));
         }
 
         if (!is_opened)
@@ -192,12 +192,12 @@ wxPlotFunction wxClipboardGetPlotFunction()
 }
 bool wxClipboardSetPlotFunction(const wxPlotFunction& plotFunc)
 {
-    wxCHECK_MSG(plotFunc.Ok(), false, wxT("Invalid wxPlotFunction to copy to clipboard"));
+    wxCHECK_MSG(plotFunc.Ok(), false, "Invalid wxPlotFunction to copy to clipboard");
     bool is_opened = wxTheClipboard->IsOpened();
 
     if (is_opened || wxTheClipboard->Open())
     {
-        wxString str = plotFunc.GetFunctionString() + wxT(";") + plotFunc.GetVariableString();
+        wxString str = plotFunc.GetFunctionString() + ";" + plotFunc.GetVariableString();
         wxTextDataObject *textDataObject = new wxTextDataObject(str);
         wxTheClipboard->SetData( textDataObject );
 

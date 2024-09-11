@@ -85,7 +85,7 @@ void wxPlotPrintout::SetPageSetupData( wxPageSetupData *pageSetupData, bool is_s
 wxPlotPrintout::wxPlotPrintout( wxPlotCtrl* plotCtrl, const wxString &title )
                : wxPrintout(title), m_plotCtrl(plotCtrl)
 {
-    wxASSERT_MSG(m_plotCtrl != NULL, wxT("NULL wxPlotCtrl for printing"));
+    wxASSERT_MSG(m_plotCtrl != NULL, "NULL wxPlotCtrl for printing");
 }
 
 bool wxPlotPrintout::OnBeginDocument(int startPage, int endPage)
@@ -99,7 +99,7 @@ bool wxPlotPrintout::OnBeginDocument(int startPage, int endPage)
 bool wxPlotPrintout::OnPrintPage(int page_n)
 {
     wxDC *dc = GetDC();
-    wxCHECK_MSG(dc && m_plotCtrl, false, wxT("Invalid dc or plotctrl"));
+    wxCHECK_MSG(dc && m_plotCtrl, false, "Invalid dc or plotctrl");
 
     if (page_n != 1) return false;
 
@@ -174,7 +174,7 @@ bool wxPlotPrintout::OnPrintPage(int page_n)
 
 bool wxPlotPrintout::ShowPrintDialog()
 {
-    wxCHECK_MSG(GetPlotCtrl(), false, wxT("Invalid plot window"));
+    wxCHECK_MSG(GetPlotCtrl(), false, "Invalid plot window");
     wxPrintDialogData printDialogData(*wxPlotPrintout::GetPrintData(true));
 
     wxPrinter printer(& printDialogData);
@@ -192,7 +192,7 @@ bool wxPlotPrintout::ShowPrintDialog()
 }
 bool wxPlotPrintout::ShowPrintPreviewDialog(const wxString& frameTitle)
 {
-    wxCHECK_MSG(GetPlotCtrl(), false, wxT("Invalid plot window"));
+    wxCHECK_MSG(GetPlotCtrl(), false, "Invalid plot window");
     // Pass two printout objects: for preview, and possible printing.
     wxPrintDialogData printDialogData(*wxPlotPrintout::GetPrintData(true));
     wxPrintPreview *preview = new wxPrintPreview(new wxPlotPrintout(GetPlotCtrl(), GetTitle()),
@@ -219,7 +219,7 @@ bool wxPlotPrintout::ShowPrintPreviewDialog(const wxString& frameTitle)
 }
 bool wxPlotPrintout::ShowPrintSetupDialog()
 {
-    wxCHECK_MSG(GetPlotCtrl(), false, wxT("Invalid plot window"));
+    wxCHECK_MSG(GetPlotCtrl(), false, "Invalid plot window");
     wxPrintDialogData printDialogData(*wxPlotPrintout::GetPrintData(true));
     wxPrintDialog printerDialog(GetPlotCtrl(), & printDialogData);
 #if !wxCHECK_VERSION(2,7,0)
@@ -236,7 +236,7 @@ bool wxPlotPrintout::ShowPrintSetupDialog()
 }
 bool wxPlotPrintout::ShowPrintPageSetupDialog()
 {
-    wxCHECK_MSG(GetPlotCtrl(), false, wxT("Invalid plot window"));
+    wxCHECK_MSG(GetPlotCtrl(), false, "Invalid plot window");
     *wxPlotPrintout::GetPageSetupData(true) = *wxPlotPrintout::GetPrintData();
     wxPageSetupDialog pageSetupDialog(GetPlotCtrl(), wxPlotPrintout::GetPageSetupData());
 

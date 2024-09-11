@@ -22,7 +22,7 @@
 #define WXTHINGS_MINOR_VERSION      0
 #define WXTHINGS_RELEASE_VERSION    0
 #define WXTHINGS_SUBRELEASE_VERSION 0
-#define WXTHINGS_VERSION_STRING    _T("wxThings 1.0.0")
+#define WXTHINGS_VERSION_STRING    "wxThings 1.0.0"
 
 // For non-Unix systems (i.e. when building without a configure script),
 // users of this component can use the following macro to check if the

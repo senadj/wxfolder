@@ -199,8 +199,8 @@ wxString wxFunctionParser::GetVariableName(size_t n) const
     for (i = 0; i < len; i++)
     {
         if (n == count)
-            return vars.Mid(i).BeforeFirst(wxT(','));
-        if (vars[i] == wxT(','))
+            return vars.Mid(i).BeforeFirst(',');
+        if (vars[i] == ',')
             count++;
     }
 

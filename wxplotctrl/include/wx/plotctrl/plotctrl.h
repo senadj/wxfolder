@@ -180,7 +180,7 @@ public:
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxSize(100, 100),
                    long style = wxNO_BORDER|wxWANTS_CHARS|wxCLIP_CHILDREN,
-                   const wxString& name = wxT("wxPlotCtrlArea"));
+                   const wxString& name = "wxPlotCtrlArea");
 
     virtual ~wxPlotCtrlArea() {}
 
@@ -214,7 +214,7 @@ public:
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long style = wxNO_BORDER|wxWANTS_CHARS|wxCLIP_CHILDREN,
-                   const wxString& name = wxT("wxPlotCtrlAxis"));
+                   const wxString& name = "wxPlotCtrlAxis");
 
     virtual ~wxPlotCtrlAxis() {}
 
@@ -254,7 +254,7 @@ public:
                   const wxPoint &pos = wxDefaultPosition,
                   const wxSize &size = wxDefaultSize,
                   wxPlotCtrlAxis_Type flags = wxPLOTCTRL_DEFAULT,
-                  const wxString& name = wxT("wxPlotCtrl") )
+                  const wxString& name = "wxPlotCtrl" )
     {
         Init();
         (void)Create(parent, win_id, pos, size, flags, name);
@@ -264,7 +264,7 @@ public:
                  const wxPoint &pos = wxDefaultPosition,
                  const wxSize &size = wxDefaultSize,
                  wxPlotCtrlAxis_Type flags = wxPLOTCTRL_DEFAULT,
-                 const wxString& name = wxT("wxPlotCtrl") );
+                 const wxString& name = "wxPlotCtrl" );
 
     virtual ~wxPlotCtrl();
 

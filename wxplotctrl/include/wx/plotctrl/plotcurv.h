@@ -67,15 +67,15 @@ enum wxPlotPen_Type
     wxPLOTPEN_MAXTYPE
 };
 
-#define wxPLOTCURVE_OPTION_FILENAME      wxT("File.Name")
-#define wxPLOTCURVE_OPTION_EOLMODE       wxT("EOL.Mode")
-#define wxPLOTCURVE_OPTION_MODIFIED      wxT("Modified")
-#define wxPLOTCURVE_OPTION_HEADER        wxT("Header")
-#define wxPLOTCURVE_OPTION_DATASEPARATOR wxT("Data.Separator")
+#define wxPLOTCURVE_OPTION_FILENAME      "File.Name"
+#define wxPLOTCURVE_OPTION_EOLMODE       "EOL.Mode"
+#define wxPLOTCURVE_OPTION_MODIFIED      "Modified"
+#define wxPLOTCURVE_OPTION_HEADER        "Header"
+#define wxPLOTCURVE_OPTION_DATASEPARATOR "Data.Separator"
 
-#define wxPLOTCURVE_DATASEPARATOR_SPACE wxT(" ")
-#define wxPLOTCURVE_DATASEPARATOR_COMMA wxT(",")
-#define wxPLOTCURVE_DATASEPARATOR_TAB   wxT("\t")
+#define wxPLOTCURVE_DATASEPARATOR_SPACE " "
+#define wxPLOTCURVE_DATASEPARATOR_COMMA ","
+#define wxPLOTCURVE_DATASEPARATOR_TAB   "\t"
 
 //----------------------------------------------------------------------------
 // wxPlotCurveRefData - the wxObject::m_refData used for wxPlotCurves

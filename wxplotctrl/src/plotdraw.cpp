@@ -322,7 +322,7 @@ public:
                 double x1_, double y1_, double x2_, double y2_)
     {
         m_dc = dc;
-        wxCHECK_RET( dc, wxT("invalid window dc") );
+        wxCHECK_RET( dc, "invalid window dc" );
 
         m_selPen   = selPen;
         m_curPen   = curPen;
@@ -351,7 +351,7 @@ public:
     // After the last point call this to finish the drawing
     void EndSpline()
     {
-        wxCHECK_RET( m_dc, wxT("invalid window dc") );
+        wxCHECK_RET( m_dc, "invalid window dc" );
         if (ClipLineToRect(m_cx1, m_cy1, m_x2, m_y2, m_rect) != ClippedOut)
             m_dc->DrawLine((int)m_cx1, (int)m_cy1, (int)m_x2, (int)m_y2);
     }
@@ -379,7 +379,7 @@ private:
 
 void SplineDrawer::DrawSpline( double x, double y )
 {
-    wxCHECK_RET( m_dc, wxT("invalid window dc") );
+    wxCHECK_RET( m_dc, "invalid window dc" );
     wxPen oldPen = m_dc->GetPen();
 
     bool is_selected = (oldPen == m_selPen);
@@ -452,7 +452,7 @@ void SplineDrawer::DrawSpline( double x, double y )
         }
         else
         {
-            wxCHECK_RET(m_stack_count < SPLINE_STACK_DEPTH - 2, wxT("Spline stack overflow"));
+            wxCHECK_RET(m_stack_count < SPLINE_STACK_DEPTH - 2, "Spline stack overflow");
             SPLINE_PUSH(xmid, ymid, (xmid + xx3)/2.0, (ymid + yy3)/2.0,
                         (xx3 + xx4)/2.0, (yy3 + yy4)/2.0, xx4, yy4);
             SPLINE_PUSH(xx1, yy1, (xx1 + xx2)/2.0, (yy1 + yy2)/2.0,
@@ -509,7 +509,7 @@ IMPLEMENT_ABSTRACT_CLASS(wxPlotDrawerXAxis, wxPlotDrawerAxisBase)
 
 void wxPlotDrawerXAxis::Draw(wxDC *dc, bool refresh)
 {
-    wxCHECK_RET(dc, wxT("Invalid dc"));
+    wxCHECK_RET(dc, "Invalid dc");
 
     wxRect dcRect(GetDCRect());
 
@@ -532,7 +532,7 @@ void wxPlotDrawerXAxis::Draw(wxDC *dc, bool refresh)
 
     // center the text in the window
     int x, y;
-    dc->GetTextExtent(wxT("5"), &x, &y);
+    dc->GetTextExtent("5", &x, &y);
     int y_pos = (GetDCRect().height - y)/2 + 2; // FIXME I want to center this
     // double current = ceil(m_viewRect.GetLeft() / m_xAxisTick_step) * m_xAxisTick_step;
     int i, count = m_tickPositions.GetCount();
@@ -540,7 +540,7 @@ void wxPlotDrawerXAxis::Draw(wxDC *dc, bool refresh)
     {
         dc->DrawText(m_tickLabels[i], m_tickPositions[i], y_pos);
 
-//        if (!IsFinite(current, wxT("axis label is not finite")))
+//        if (!IsFinite(current, "axis label is not finite"))
 //            break;
 //        label.Printf( m_xAxisTickFormat.c_str(), current );
 //        dc->DrawText(label, m_xAxisTicks[i], y_pos);
@@ -562,7 +562,7 @@ IMPLEMENT_ABSTRACT_CLASS(wxPlotDrawerYAxis, wxPlotDrawerAxisBase)
 
 void wxPlotDrawerYAxis::Draw(wxDC *dc, bool refresh)
 {
-    wxCHECK_RET(dc, wxT("Invalid dc"));
+    wxCHECK_RET(dc, "Invalid dc");
 
     wxRect dcRect(GetDCRect());
 
@@ -588,7 +588,7 @@ void wxPlotDrawerYAxis::Draw(wxDC *dc, bool refresh)
     {
         dc->DrawText( m_tickLabels[i], 2, m_tickPositions[i] );
 
-//        if (!IsFinite(current, wxT("axis label is not finite")))
+//        if (!IsFinite(current, "axis label is not finite"))
 //            break;
 //        label.Printf( m_yAxisTickFormat.c_str(), current);
 //        dc->DrawText( label, 2, m_yAxisTicks[i] );
@@ -622,7 +622,7 @@ wxPlotDrawerKey::wxPlotDrawerKey(wxPlotCtrl* owner)
 
 void wxPlotDrawerKey::Draw(wxDC *dc, const wxString& keyString_)
 {
-    wxCHECK_RET(dc && m_owner, wxT("Invalid dc"));
+    wxCHECK_RET(dc && m_owner, "Invalid dc");
 
     if (keyString_.IsEmpty())
         return;
@@ -678,8 +678,8 @@ void wxPlotDrawerKey::Draw(wxDC *dc, const wxString& keyString_)
 
     while (!keyString.IsEmpty())
     {
-        wxString subkey = keyString.BeforeFirst(wxT('\n')).Strip(wxString::both);
-        keyString = keyString.AfterFirst(wxT('\n'));
+        wxString subkey = keyString.BeforeFirst('\n').Strip(wxString::both);
+        keyString = keyString.AfterFirst('\n');
         if (subkey.IsEmpty()) break;
 
         if (m_owner && m_owner->GetCurve(i))
@@ -711,7 +711,7 @@ IMPLEMENT_ABSTRACT_CLASS(wxPlotDrawerCurve, wxPlotDrawerBase)
 
 void wxPlotDrawerCurve::Draw(wxDC *dc, wxPlotCurve *curve, int curve_index)
 {
-    wxCHECK_RET(dc && m_owner && curve && curve->Ok(), wxT("invalid curve"));
+    wxCHECK_RET(dc && m_owner && curve && curve->Ok(), "invalid curve");
     INITIALIZE_FAST_GRAPHICS
 
     wxRect dcRect(GetDCRect());
@@ -785,7 +785,7 @@ IMPLEMENT_ABSTRACT_CLASS(wxPlotDrawerDataCurve, wxPlotDrawerBase)
 
 void wxPlotDrawerDataCurve::Draw(wxDC *dc, wxPlotData* curve, int curve_index)
 {
-    wxCHECK_RET(dc && m_owner && curve && curve->Ok(), wxT("invalid curve"));
+    wxCHECK_RET(dc && m_owner && curve && curve->Ok(), "invalid curve");
     INITIALIZE_FAST_GRAPHICS
 
     wxRect dcRect(GetDCRect());
@@ -993,7 +993,7 @@ void wxPlotDrawerMarker::Draw(wxDC *dc, const wxPlotMarker& marker)
 
 void wxPlotDrawerMarker::Draw(wxDC *dc, const wxArrayPlotMarker& markers)
 {
-    wxCHECK_RET(dc && m_owner, wxT("dc or owner"));
+    wxCHECK_RET(dc && m_owner, "dc or owner");
     INITIALIZE_FAST_GRAPHICS
 
     wxRect dcRect(GetDCRect());
@@ -1004,7 +1004,7 @@ void wxPlotDrawerMarker::Draw(wxDC *dc, const wxArrayPlotMarker& markers)
     for (n = 0; n < count; n++)
     {
         const wxPlotMarker &marker = markers[n];
-        wxCHECK_RET(marker.Ok(), wxT("Invalid marker"));
+        wxCHECK_RET(marker.Ok(), "Invalid marker");
 
         wxRect2DDouble r(marker.GetPlotRect());
         x0 = r.m_x;

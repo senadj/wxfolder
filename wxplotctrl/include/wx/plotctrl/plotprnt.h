@@ -39,7 +39,7 @@ public:
 
     // Simplified methods to show the standard print dialogs
     bool ShowPrintDialog();
-    bool ShowPrintPreviewDialog(const wxString& frameTitle = wxT("Plot print preview"));
+    bool ShowPrintPreviewDialog(const wxString& frameTitle = "Plot print preview");
     bool ShowPrintSetupDialog();
     bool ShowPrintPageSetupDialog();
 

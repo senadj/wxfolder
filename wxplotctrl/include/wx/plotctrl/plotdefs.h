@@ -24,7 +24,7 @@
 #define wxPLOTCTRL_MINOR_VERSION      0
 #define wxPLOTCTRL_RELEASE_VERSION    1
 #define wxPLOTCTRL_SUBRELEASE_VERSION 0
-#define wxPLOTCTRL_VERSION_STRING     wxT("wxPlotCtrl 1.0.1")
+#define wxPLOTCTRL_VERSION_STRING     "wxPlotCtrl 1.0.1"
 
 // For non-Unix systems (i.e. when building without a configure script),
 // users of this component can use the following macro to check if the
@@ -66,8 +66,8 @@
 #define LONG_TO_WXCOLOUR(c) wxColour((unsigned char)((c>>16)&0xFF), (unsigned char)((c>>8 )&0xFF), (unsigned char)((c)&0xFF))
 #define WXCOLOUR_TO_LONG(c) ((c.Red()<<16)|(c.Green()<<8)|(c.Blue()))
 
-inline void PRINT_WXRECT(const wxString& str, const wxRect& r)                 { wxPrintf(wxT("%s xy(%d %d) wh(%d %d) rb(%d %d)\n"), str.c_str(), r.x,   r.y,   r.width,   r.height,   r.GetRight(), r.GetBottom()); }
-inline void PRINT_WXRECT2DDOUBLE(const wxString& str, const wxRect2DDouble& r) { wxPrintf(wxT("%s xy(%g %g) wh(%g %g) rb(%g %g)\n"), str.c_str(), r.m_x, r.m_y, r.m_width, r.m_height, r.GetRight(), r.GetBottom()); }
+inline void PRINT_WXRECT(const wxString& str, const wxRect& r)                 { wxPrintf("%s xy(%d %d) wh(%d %d) rb(%d %d)\n", str.c_str(), r.x,   r.y,   r.width,   r.height,   r.GetRight(), r.GetBottom()); }
+inline void PRINT_WXRECT2DDOUBLE(const wxString& str, const wxRect2DDouble& r) { wxPrintf("%s xy(%g %g) wh(%g %g) rb(%g %g)\n", str.c_str(), r.m_x, r.m_y, r.m_width, r.m_height, r.GetRight(), r.GetBottom()); }
 
 #define WXPC_HASBIT(var, mask) (((var)&(mask)) != 0)
 

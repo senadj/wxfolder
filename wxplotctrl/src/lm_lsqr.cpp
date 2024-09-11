@@ -43,7 +43,7 @@ static int s_nprint = 0;
 
 void SetLM_LeastSquareProgressHandlerTicks( int iterations )
 {
-    wxCHECK_RET( (iterations>=0), wxT("invalid iteration step size"));
+    wxCHECK_RET( (iterations>=0), "invalid iteration step size");
     s_nprint = iterations;
 }
 
@@ -124,7 +124,7 @@ void LM_LeastSquare::ReInit()
 
 void LM_LeastSquare::Destroy()
 {
-    wxCHECK_RET(!IsFitting(), wxT("Cannot Destroy Least Square when currently fitting"));
+    wxCHECK_RET(!IsFitting(), "Cannot Destroy Least Square when currently fitting");
     if (m_plotData) delete m_plotData;
     if (m_plotFunc) delete m_plotFunc;
 
@@ -141,11 +141,11 @@ void LM_LeastSquare::Destroy()
 
 bool LM_LeastSquare::Create(const wxPlotData &plotData, const wxPlotFunction &plotFunc)
 {
-    wxCHECK_MSG(!IsFitting(), false, wxT("Cannot recreate Least Square when currently fitting"));
+    wxCHECK_MSG(!IsFitting(), false, "Cannot recreate Least Square when currently fitting");
     Destroy();
 
-    wxCHECK_MSG(plotData.Ok() && plotFunc.Ok(), false, wxT("invalid functions"));
-    wxCHECK_MSG((plotData.GetCount() > 1) && (plotData.GetCount() >= plotFunc.GetNumberVariables() - 1), false, wxT("invalid dimensions"));
+    wxCHECK_MSG(plotData.Ok() && plotFunc.Ok(), false, "invalid functions");
+    wxCHECK_MSG((plotData.GetCount() > 1) && (plotData.GetCount() >= plotFunc.GetNumberVariables() - 1), false, "invalid dimensions");
 
     m_plotData = new wxPlotData(plotData);
     m_plotFunc = new wxPlotFunction(plotFunc);
@@ -158,7 +158,7 @@ bool LM_LeastSquare::Create(const wxPlotData &plotData, const wxPlotFunction &pl
         if (!wxFinite(*x_data) && !wxFinite(*y_data))
         {
             Destroy();
-            m_resultMsg.Printf(wxT("Unable to fit data since some values are NaN"));
+            m_resultMsg.Printf("Unable to fit data since some values are NaN");
             return false;
         }
     }
@@ -180,7 +180,7 @@ bool LM_LeastSquare::Create(const wxPlotData &plotData, const wxPlotFunction &pl
     if (!(m_plotData && m_plotFunc && m_vars && m_x && m_fvec && m_diag && m_fjac && m_qtf && m_ipvt))
     {
         Destroy();
-        wxFAIL_MSG(wxT("can't allocate memory for LM_LeastSquare::Create"));
+        wxFAIL_MSG("can't allocate memory for LM_LeastSquare::Create");
         return false;
     }
 
@@ -192,7 +192,7 @@ bool LM_LeastSquare::Create(const wxPlotData &plotData, const wxPlotFunction &pl
 
 int LM_LeastSquare::Fit(const double *x0, int init_count)
 {
-    wxCHECK_MSG(Ok() && !IsFitting(), 0, wxT("invalid functions"));
+    wxCHECK_MSG(Ok() && !IsFitting(), 0, "invalid functions");
 
     m_nan   = 0;
     m_info  = -1;
@@ -203,7 +203,7 @@ int LM_LeastSquare::Fit(const double *x0, int init_count)
 
     if (x0 && (init_count > 0))
     {
-        wxCHECK_MSG(init_count <= m_n, 0, wxT("Invalid initializer count"));
+        wxCHECK_MSG(init_count <= m_n, 0, "Invalid initializer count");
 
         // initialize the variables
         for (i = 0; i < init_count; i++)
@@ -211,7 +211,7 @@ int LM_LeastSquare::Fit(const double *x0, int init_count)
             if (!wxFinite(x0[i]))
             {
                 m_x[i] = m_init_value;
-                wxLogWarning(wxT("Initial value is NaN in LM_LeastSquare::Fit"));
+                wxLogWarning("Initial value is NaN in LM_LeastSquare::Fit");
             }
             else
                 m_x[i] = x0[i];
@@ -239,7 +239,7 @@ int LM_LeastSquare::Fit(const double *x0, int init_count)
         if (wa3) free(wa3);
         if (wa4) free(wa4);
 
-        wxFAIL_MSG(wxT("can't allocate memory for LM_LeastSquare::Fit"));
+        wxFAIL_MSG("can't allocate memory for LM_LeastSquare::Fit");
         return 0;
     }
 
@@ -287,29 +287,29 @@ wxString LM_LeastSquare::GetResultMessage() const
     switch (m_info)
     {
         case -1 : return m_resultMsg; // error before fitting
-        case  0 : msg.Printf(wxT("Improper input parameters.")); break;
-        case  1 : msg.Printf(wxT("Both actual and predicted relative reductions in the sum of squares are at most ftol (%lg)."), m_ftol); break;
-        case  2 : msg.Printf(wxT("Relative error between two consecutive iterates is at most xtol (%lg)."), m_xtol); break;
-        case  3 : msg.Printf(wxT("Both actual and predicted relative reductions in the sum of squares are at most ftol (%lg)."), m_ftol);
-                 msg += wxString::Format(wxT("Relative error between two consecutive iterates is at most xtol (%lg)."), m_xtol); break;
-        case  4 : msg.Printf(wxT("The cosine of the angle between fvec and any column of the jacobian is at most gtol (%lg) in absolute value."), m_gtol); break;
-        case  5 : msg.Printf(wxT("Number of iterations has reached or exceeded %d, try adjusting initial values."), m_maxfev); break;
-        case  6 : msg.Printf(wxT("ftol (%lg) is too small. no further reduction in the sum of squares is possible"), m_ftol); break;
-        case  7 : msg.Printf(wxT("xtol (%lg) too small. no further improvement in approximate solution x possible"), m_xtol); break;
-        case  8 : msg.Printf(wxT("gtol (%lg) is too small. fvec is orthogonal to the columns of the jacobian to machine precision."), m_gtol); break;
+        case  0 : msg.Printf("Improper input parameters."); break;
+        case  1 : msg.Printf("Both actual and predicted relative reductions in the sum of squares are at most ftol (%lg).", m_ftol); break;
+        case  2 : msg.Printf("Relative error between two consecutive iterates is at most xtol (%lg).", m_xtol); break;
+        case  3 : msg.Printf("Both actual and predicted relative reductions in the sum of squares are at most ftol (%lg).", m_ftol);
+                 msg += wxString::Format("Relative error between two consecutive iterates is at most xtol (%lg).", m_xtol); break;
+        case  4 : msg.Printf("The cosine of the angle between fvec and any column of the jacobian is at most gtol (%lg) in absolute value.", m_gtol); break;
+        case  5 : msg.Printf("Number of iterations has reached or exceeded %d, try adjusting initial values.", m_maxfev); break;
+        case  6 : msg.Printf("ftol (%lg) is too small. no further reduction in the sum of squares is possible", m_ftol); break;
+        case  7 : msg.Printf("xtol (%lg) too small. no further improvement in approximate solution x possible", m_xtol); break;
+        case  8 : msg.Printf("gtol (%lg) is too small. fvec is orthogonal to the columns of the jacobian to machine precision.", m_gtol); break;
         default : break;
     }
 
     if (m_nan)
-        msg += wxString::Format(wxT(" %ld values were skipped since they were NaN"), m_nan);
+        msg += wxString::Format(" %ld values were skipped since they were NaN", m_nan);
 
     return msg;
 }
 
 double LM_LeastSquare::GetVariable(int n)
 {
-    wxCHECK_MSG(m_x, 0.0, wxT("LM_LeastSquare not created"));
-    wxCHECK_MSG((n>=0)&&(n<m_n), 0.0, wxT("Invalid variable index"));
+    wxCHECK_MSG(m_x, 0.0, "LM_LeastSquare not created");
+    wxCHECK_MSG((n>=0)&&(n<m_n), 0.0, "Invalid variable index");
     return m_x[n];
 }
 
@@ -355,7 +355,7 @@ double LM_LeastSquare::GetVariable(int n)
 
 void LM_LeastSquare::fcn(int m, int n, double x[], double fvec[], int *iflag)
 {
-    wxCHECK_RET(m_plotData && m_plotFunc, wxT("invalid functions"));
+    wxCHECK_RET(m_plotData && m_plotFunc, "invalid functions");
 
     if (*iflag == 0)
     {

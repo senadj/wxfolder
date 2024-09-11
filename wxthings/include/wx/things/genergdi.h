@@ -114,8 +114,8 @@ public:
     wxGenericColour GetHotColdColour(double i) const;
 
     // Read colour to and from string
-    //wxString WriteString(const wxString& format = wxT("%d,%d,%d,%d")) const;
-    //bool ReadString(const wxString& str, const wxString& format = wxT("%d,%d,%d,%d"));
+    //wxString WriteString(const wxString& format = "%d,%d,%d,%d") const;
+    //bool ReadString(const wxString& str, const wxString& format = "%d,%d,%d,%d");
 
     // operators
     bool operator == (const wxGenericColour& c) const { return m_refData == c.m_refData; }

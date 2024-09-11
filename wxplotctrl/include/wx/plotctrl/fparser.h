@@ -30,7 +30,7 @@ class FunctionParser;
 //-----------------------------------------------------------------------------
 // wxFunctionParser usage (see fparser.txt for details)
 //
-// After creating call Parse(wxT("x*sin(x)+x/2.8"), wxT("x"))
+// After creating call Parse("x*sin(x)+x/2.8", "x")
 //     see available funtions are listed in fparser.txt
 //     "x" is the var or a comma separated list or vars "x,y,z"
 //

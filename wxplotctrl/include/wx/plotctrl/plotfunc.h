@@ -31,7 +31,7 @@ class WXDLLIMPEXP_PLOTCTRL wxPlotFunction: public wxPlotCurve
 public:
     wxPlotFunction() : wxPlotCurve() {}
     wxPlotFunction(const wxPlotFunction &curve) { Create(curve); }
-    wxPlotFunction(const wxString &function, const wxString &vars = wxT("x"),
+    wxPlotFunction(const wxString &function, const wxString &vars = "x",
                    bool useDegrees = false) { Create(function, vars, useDegrees); }
 
     virtual wxPlotCurve* Clone() const { return new wxPlotFunction(*this); }
@@ -44,7 +44,7 @@ public:
     //   Check if errormsg != wxEmptyString, or curve.Ok() not the returned int
     //   vars is a comma delimited list of variables used in the function "x,y,z"
     //   vars can be wxEmptyString, see GetValue(NULL), the function is a constant
-    int Create( const wxString &function, const wxString &vars = wxT("x"),
+    int Create( const wxString &function, const wxString &vars = "x",
                 bool useDegrees = false );
     // Make a copy of the other plotFunction
     bool Create( const wxPlotFunction &curve );
@@ -53,7 +53,7 @@ public:
     void Destroy();
 
     // Parse and use the function, see Create, does not destroy refdata
-    int Parse( const wxString &function, const wxString &vars = wxT("x"),
+    int Parse( const wxString &function, const wxString &vars = "x",
                bool useDegrees = false );
 
     // Get the strings sent to Create

@@ -81,82 +81,82 @@ void wxPlotMarker::Create(int marker_type, const wxRect2DDouble& rect,
 
 int wxPlotMarker::GetMarkerType() const
 {
-    wxCHECK_MSG(Ok(), wxPLOTMARKER_NONE, wxT("Invalid plot marker"));
+    wxCHECK_MSG(Ok(), wxPLOTMARKER_NONE, "Invalid plot marker");
     return M_PMARKERDATA->m_markerType;
 }
 void wxPlotMarker::SetMarkerType(int type)
 {
-    wxCHECK_RET(Ok(), wxT("Invalid plot marker"));
+    wxCHECK_RET(Ok(), "Invalid plot marker");
     M_PMARKERDATA->m_markerType = type;
 }
 
 wxRect2DDouble wxPlotMarker::GetPlotRect() const
 {
-    wxCHECK_MSG(Ok(), wxRect2DDouble(), wxT("Invalid plot marker"));
+    wxCHECK_MSG(Ok(), wxRect2DDouble(), "Invalid plot marker");
     return M_PMARKERDATA->m_rect;
 }
 wxRect2DDouble& wxPlotMarker::GetPlotRect()
 {
     static wxRect2DDouble s_rect;
-    wxCHECK_MSG(Ok(), s_rect, wxT("Invalid plot marker"));
+    wxCHECK_MSG(Ok(), s_rect, "Invalid plot marker");
     return M_PMARKERDATA->m_rect;
 }
 void wxPlotMarker::SetPlotRect(const wxRect2DDouble& rect)
 {
-    wxCHECK_RET(Ok(), wxT("Invalid plot marker"));
+    wxCHECK_RET(Ok(), "Invalid plot marker");
     M_PMARKERDATA->m_rect = rect;
 }
 
 wxPoint2DDouble wxPlotMarker::GetPlotPosition() const
 {
-    wxCHECK_MSG(Ok(), wxPoint2DDouble(), wxT("Invalid plot marker"));
+    wxCHECK_MSG(Ok(), wxPoint2DDouble(), "Invalid plot marker");
     return M_PMARKERDATA->m_rect.GetLeftTop();
 }
 void wxPlotMarker::SetPlotPosition(const wxPoint2DDouble& pos)
 {
-    wxCHECK_RET(Ok(), wxT("Invalid plot marker"));
+    wxCHECK_RET(Ok(), "Invalid plot marker");
     M_PMARKERDATA->m_rect.m_x = pos.m_x;
     M_PMARKERDATA->m_rect.m_y = pos.m_y;
 }
 
 wxSize wxPlotMarker::GetSize() const
 {
-    wxCHECK_MSG(Ok(), wxSize(-1, -1), wxT("Invalid plot marker"));
+    wxCHECK_MSG(Ok(), wxSize(-1, -1), "Invalid plot marker");
     return M_PMARKERDATA->m_size;
 }
 void wxPlotMarker::SetSize(const wxSize& size)
 {
-    wxCHECK_RET(Ok(), wxT("Invalid plot marker"));
+    wxCHECK_RET(Ok(), "Invalid plot marker");
     M_PMARKERDATA->m_size = size;
 }
 
 wxGenericPen wxPlotMarker::GetPen() const
 {
-    wxCHECK_MSG(Ok(), wxNullGenericPen, wxT("Invalid plot marker"));
+    wxCHECK_MSG(Ok(), wxNullGenericPen, "Invalid plot marker");
     return M_PMARKERDATA->m_pen;
 }
 void wxPlotMarker::SetPen(const wxGenericPen& pen)
 {
-    wxCHECK_RET(Ok(), wxT("Invalid plot marker"));
+    wxCHECK_RET(Ok(), "Invalid plot marker");
     M_PMARKERDATA->m_pen = pen;
 }
 wxGenericBrush wxPlotMarker::GetBrush() const
 {
-    wxCHECK_MSG(Ok(), wxNullGenericBrush, wxT("Invalid plot marker"));
+    wxCHECK_MSG(Ok(), wxNullGenericBrush, "Invalid plot marker");
     return M_PMARKERDATA->m_brush;
 }
 void wxPlotMarker::SetBrush(const wxGenericBrush& brush)
 {
-    wxCHECK_RET(Ok(), wxT("Invalid plot marker"));
+    wxCHECK_RET(Ok(), "Invalid plot marker");
     M_PMARKERDATA->m_brush = brush;
 }
 wxBitmap wxPlotMarker::GetBitmap() const
 {
-    wxCHECK_MSG(Ok(), wxNullBitmap, wxT("Invalid plot marker"));
+    wxCHECK_MSG(Ok(), wxNullBitmap, "Invalid plot marker");
     return M_PMARKERDATA->m_bitmap;
 }
 void wxPlotMarker::SetBitmap(const wxBitmap& bitmap)
 {
-    wxCHECK_RET(Ok(), wxT("Invalid plot marker"));
+    wxCHECK_RET(Ok(), "Invalid plot marker");
     M_PMARKERDATA->m_bitmap = bitmap;
 }

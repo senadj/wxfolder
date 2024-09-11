@@ -39,7 +39,7 @@ class WXDLLIMPEXP_PLOTCTRL wxPlotFunction;
 // Usage: create a function like this
 //   bool LM_LeastSquareProgressHandler(const wxString &text, int current, int max)
 //     { [ do stuff... for example update a progress dialog ]
-//       wxString str = text + wxString::Format(wxT("\nIteration # %d of %d"), current, max);
+//       wxString str = text + wxString::Format("\nIteration # %d of %d", current, max);
 //       int percent = wxMin(int(100.0*current/max), 99); // iterations may overflow!
 //       return s_progressDialog->Update(percent, str); }
 //
@@ -75,7 +75,7 @@ extern void SetLM_LeastSquareProgressHandlerTicks( int iterations );
 //      lmLeastSquare.Fit(NULL);
 //      or Fit(init, init_count) where double init[init_count] = { a, b, c, ... }
 //      for (int k=0; k<lmLeastSquare.GetNumberVariables(); k++) // print a,b,c,...
-//           wxPrintf(wxT("%s=%g; "), func.GetVariableName(k).c_str(), lmLeastSquare.GetVariable(k));
+//           wxPrintf("%s=%g; ", func.GetVariableName(k).c_str(), lmLeastSquare.GetVariable(k));
 //
 //=============================================================================
 

@@ -94,7 +94,7 @@ void wxGenericColour::Create( const wxString& colourName )
 
 void wxGenericColour::Set( const wxGenericColour &c )
 {
-    wxCHECK_RET(Ok() && c.Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok() && c.Ok(), "Invalid generic colour");
     M_GCOLOURDATA->m_r = c.GetRed();
     M_GCOLOURDATA->m_g = c.GetGreen();
     M_GCOLOURDATA->m_b = c.GetBlue();
@@ -102,7 +102,7 @@ void wxGenericColour::Set( const wxGenericColour &c )
 }
 void wxGenericColour::Set( const wxColour& c )
 {
-    wxCHECK_RET(Ok() && c.Ok(), wxT("Invalid colour"));
+    wxCHECK_RET(Ok() && c.Ok(), "Invalid colour");
     M_GCOLOURDATA->m_r = c.Red();
     M_GCOLOURDATA->m_g = c.Green();
     M_GCOLOURDATA->m_b = c.Blue();
@@ -110,7 +110,7 @@ void wxGenericColour::Set( const wxColour& c )
 void wxGenericColour::Set( unsigned char red, unsigned char green,
                            unsigned char blue, unsigned char alpha )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok(), "Invalid generic colour");
     M_GCOLOURDATA->m_r = red;
     M_GCOLOURDATA->m_g = green;
     M_GCOLOURDATA->m_b = blue;
@@ -118,7 +118,7 @@ void wxGenericColour::Set( unsigned char red, unsigned char green,
 }
 void wxGenericColour::SetABGR( unsigned long colABGR )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok(), "Invalid generic colour");
     M_GCOLOURDATA->m_r = (unsigned char)(0xFF& colABGR);
     M_GCOLOURDATA->m_g = (unsigned char)(0xFF&(colABGR >> 8));
     M_GCOLOURDATA->m_b = (unsigned char)(0xFF&(colABGR >> 16));
@@ -126,7 +126,7 @@ void wxGenericColour::SetABGR( unsigned long colABGR )
 }
 void wxGenericColour::SetARGB( unsigned long colARGB )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok(), "Invalid generic colour");
     M_GCOLOURDATA->m_b = (unsigned char)(0xFF& colARGB);
     M_GCOLOURDATA->m_g = (unsigned char)(0xFF&(colARGB >> 8));
     M_GCOLOURDATA->m_r = (unsigned char)(0xFF&(colARGB >> 16));
@@ -134,54 +134,54 @@ void wxGenericColour::SetARGB( unsigned long colARGB )
 }
 void wxGenericColour::Set( const wxString& colourName )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok(), "Invalid generic colour");
     Set(wxColour(colourName));
 }
 void wxGenericColour::SetRed( unsigned char r )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok(), "Invalid generic colour");
     M_GCOLOURDATA->m_r = r;
 }
 void wxGenericColour::SetGreen( unsigned char g )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok(), "Invalid generic colour");
     M_GCOLOURDATA->m_g = g;
 }
 void wxGenericColour::SetBlue( unsigned char b )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok(), "Invalid generic colour");
     M_GCOLOURDATA->m_b = b;
 }
 void wxGenericColour::SetAlpha( unsigned char a )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic colour"));
+    wxCHECK_RET(Ok(), "Invalid generic colour");
     M_GCOLOURDATA->m_a = a;
 }
 
 unsigned char wxGenericColour::GetRed() const
 {
-    wxCHECK_MSG(Ok(), 0, wxT("Invalid generic colour"));
+    wxCHECK_MSG(Ok(), 0, "Invalid generic colour");
     return M_GCOLOURDATA->m_r;
 }
 unsigned char wxGenericColour::GetGreen() const
 {
-    wxCHECK_MSG(Ok(), 0, wxT("Invalid generic colour"));
+    wxCHECK_MSG(Ok(), 0, "Invalid generic colour");
     return M_GCOLOURDATA->m_g;
 }
 unsigned char wxGenericColour::GetBlue() const
 {
-    wxCHECK_MSG(Ok(), 0, wxT("Invalid generic colour"));
+    wxCHECK_MSG(Ok(), 0, "Invalid generic colour");
     return M_GCOLOURDATA->m_b;
 }
 unsigned char wxGenericColour::GetAlpha() const
 {
-    wxCHECK_MSG(Ok(), 0, wxT("Invalid generic colour"));
+    wxCHECK_MSG(Ok(), 0, "Invalid generic colour");
     return M_GCOLOURDATA->m_a;
 }
 
 bool wxGenericColour::IsSameAs( const wxGenericColour& c ) const
 {
-    wxCHECK_MSG(Ok() && c.Ok(), false, wxT("Invalid generic colour"));
+    wxCHECK_MSG(Ok() && c.Ok(), false, "Invalid generic colour");
     wxGenericColourRefData *cData = (wxGenericColourRefData*)c.GetRefData();
     return (M_GCOLOURDATA->m_r == cData->m_r) && (M_GCOLOURDATA->m_g == cData->m_g) &&
            (M_GCOLOURDATA->m_b == cData->m_b) && (M_GCOLOURDATA->m_a == cData->m_a);
@@ -189,7 +189,7 @@ bool wxGenericColour::IsSameAs( const wxGenericColour& c ) const
 
 bool wxGenericColour::IsSameAs( const wxColour& c ) const
 {
-    wxCHECK_MSG(Ok() && c.Ok(), false, wxT("Invalid colour"));
+    wxCHECK_MSG(Ok() && c.Ok(), false, "Invalid colour");
     return (M_GCOLOURDATA->m_r == c.Red()) &&
            (M_GCOLOURDATA->m_g == c.Green()) &&
            (M_GCOLOURDATA->m_b == c.Blue());
@@ -325,7 +325,7 @@ void wxGenericPen::Create(const wxColour &colour, int width, int style,
 
 void wxGenericPen::Set( const wxGenericPen& pen )
 {
-    wxCHECK_RET(Ok() && pen.Ok(), wxT("Invalid generic pen"));
+    wxCHECK_RET(Ok() && pen.Ok(), "Invalid generic pen");
     SetColour(pen.GetColour());
     M_GPENDATA->m_width = pen.GetWidth();
     M_GPENDATA->m_style = pen.GetStyle();
@@ -338,7 +338,7 @@ void wxGenericPen::Set( const wxGenericPen& pen )
 }
 void wxGenericPen::Set( const wxPen &pen )
 {
-    wxCHECK_RET(Ok() && pen.Ok(), wxT("Invalid generic pen"));
+    wxCHECK_RET(Ok() && pen.Ok(), "Invalid generic pen");
     SetColour(pen.GetColour());
     M_GPENDATA->m_width = pen.GetWidth();
     M_GPENDATA->m_style = pen.GetStyle();
@@ -353,7 +353,7 @@ void wxGenericPen::Set( const wxPen &pen )
 }
 void wxGenericPen::SetColour( const wxGenericColour &colour )
 {
-    wxCHECK_RET(Ok() && colour.Ok(), wxT("Invalid generic pen or colour"));
+    wxCHECK_RET(Ok() && colour.Ok(), "Invalid generic pen or colour");
     M_GPENDATA->m_colour = colour;
 }
 void wxGenericPen::SetColour( const wxColour &colour )
@@ -366,33 +366,33 @@ void wxGenericPen::SetColour( int red, int green, int blue, int alpha )
 }
 void wxGenericPen::SetCap( wxPenCap capStyle )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic pen"));
+    wxCHECK_RET(Ok(), "Invalid generic pen");
     M_GPENDATA->m_cap = capStyle;
 }
 void wxGenericPen::SetJoin( wxPenJoin joinStyle )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic pen"));
+    wxCHECK_RET(Ok(), "Invalid generic pen");
     M_GPENDATA->m_join = joinStyle;
 }
 void wxGenericPen::SetStyle( int style )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic pen"));
+    wxCHECK_RET(Ok(), "Invalid generic pen");
     M_GPENDATA->m_style = style;
 }
 void wxGenericPen::SetWidth( int width )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic pen"));
+    wxCHECK_RET(Ok(), "Invalid generic pen");
     M_GPENDATA->m_width = width;
 }
 void wxGenericPen::SetDashes( int number_of_dashes, const wxDash *dash )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic pen"));
+    wxCHECK_RET(Ok(), "Invalid generic pen");
     wxCHECK_RET(((number_of_dashes == 0) && !dash) ||
-                ((number_of_dashes >  0) &&  dash), wxT("Invalid dashes for pen"));
+                ((number_of_dashes >  0) &&  dash), "Invalid dashes for pen");
 
     // internal double check to see if somebody's messed with this
     //wxCHECK_RET(((M_GPENDATA->m_dash_count == 0) && !M_GPENDATA->m_dash) ||
-    //            ((M_GPENDATA->m_dash_count != 0) &&  M_GPENDATA->m_dash), wxT("Invalid internal dashes for pen"));
+    //            ((M_GPENDATA->m_dash_count != 0) &&  M_GPENDATA->m_dash), "Invalid internal dashes for pen");
 
     if (M_GPENDATA->m_dash)
     {
@@ -411,7 +411,7 @@ void wxGenericPen::SetDashes( int number_of_dashes, const wxDash *dash )
 
 wxPen wxGenericPen::GetPen() const
 {
-    wxCHECK_MSG(Ok(), wxNullPen, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), wxNullPen, "Invalid generic pen");
     wxPen pen(M_GPENDATA->m_colour.GetColour(), M_GPENDATA->m_width, M_GPENDATA->m_style);
     pen.SetCap(M_GPENDATA->m_cap);
     pen.SetJoin(M_GPENDATA->m_join);
@@ -423,54 +423,54 @@ wxPen wxGenericPen::GetPen() const
 
 wxGenericColour wxGenericPen::GetGenericColour() const
 {
-    wxCHECK_MSG(Ok(), wxNullGenericColour, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), wxNullGenericColour, "Invalid generic pen");
     return M_GPENDATA->m_colour;
 }
 wxColour wxGenericPen::GetColour() const
 {
-    wxCHECK_MSG(Ok(), wxNullColour, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), wxNullColour, "Invalid generic pen");
     return M_GPENDATA->m_colour.GetColour();
 }
 int wxGenericPen::GetWidth() const
 {
-    wxCHECK_MSG(Ok(), 1, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), 1, "Invalid generic pen");
     return M_GPENDATA->m_width;
 }
 int wxGenericPen::GetStyle() const
 {
-    wxCHECK_MSG(Ok(), wxSOLID, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), wxSOLID, "Invalid generic pen");
     return M_GPENDATA->m_style;
 }
 wxPenCap wxGenericPen::GetCap() const
 {
-    wxCHECK_MSG(Ok(), wxCAP_ROUND, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), wxCAP_ROUND, "Invalid generic pen");
     return M_GPENDATA->m_cap;
 }
 wxPenJoin wxGenericPen::GetJoin() const
 {
-    wxCHECK_MSG(Ok(), wxJOIN_ROUND, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), wxJOIN_ROUND, "Invalid generic pen");
     return M_GPENDATA->m_join;
 }
 int wxGenericPen::GetDashes(wxDash **ptr) const
 {
-    wxCHECK_MSG(Ok(), 0, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), 0, "Invalid generic pen");
     *ptr = (wxDash*)M_GPENDATA->m_dash;
     return M_GPENDATA->m_dash_count;
 }
 int wxGenericPen::GetDashCount() const
 {
-    wxCHECK_MSG(Ok(), 0, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), 0, "Invalid generic pen");
     return M_GPENDATA->m_dash_count;
 }
 wxDash* wxGenericPen::GetDash() const
 {
-    wxCHECK_MSG(Ok(), NULL, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok(), NULL, "Invalid generic pen");
     return M_GPENDATA->m_dash;
 }
 
 bool wxGenericPen::IsSameAs(const wxGenericPen &pen) const
 {
-    wxCHECK_MSG(Ok() && pen.Ok(), false, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok() && pen.Ok(), false, "Invalid generic pen");
     wxGenericPenRefData *pData = (wxGenericPenRefData*)pen.GetRefData();
 
     if ((M_GPENDATA->m_colour != pData->m_colour) || (M_GPENDATA->m_width != pData->m_width) ||
@@ -485,7 +485,7 @@ bool wxGenericPen::IsSameAs(const wxGenericPen &pen) const
 }
 bool wxGenericPen::IsSameAs(const wxPen &pen) const
 {
-    wxCHECK_MSG(Ok() && pen.Ok(), false, wxT("Invalid generic pen"));
+    wxCHECK_MSG(Ok() && pen.Ok(), false, "Invalid generic pen");
     wxGenericPen gp(pen);
     gp.GetGenericColour().SetAlpha(M_GPENDATA->m_colour.GetAlpha());
     return IsSameAs(gp);
@@ -498,19 +498,19 @@ bool wxGenericPen::IsSameAs(const wxPen &pen) const
 wxString wxGenericPen::WriteString() const
 {
     wxString str;
-    str.Printf(wxT("%s,%d,%d,%d,%d,%d"), m_colour.WriteString().c_str(),
+    str.Printf("%s,%d,%d,%d,%d,%d", m_colour.WriteString().c_str(),
                                          m_width, m_style, m_cap, m_join,
                                          m_dash_count);
 
     for (int i = 0; i < m_dash_count; i++)
-        str += wxString::Format(wxT(",%d"), m_dash[i]);
+        str += wxString::Format(",%d"), m_dash[i];
 
     return str;
 }
 
 bool wxGenericPen::ReadString(const wxString& str)
 {
-    wxArrayString tokens = wxStringTokenize(str, wxT(", "), wxTOKEN_DEFAULT);
+    wxArrayString tokens = wxStringTokenize(str, ", ", wxTOKEN_DEFAULT);
     size_t n, count = tokens.GetCount();
 
     if (count < 9u)
@@ -611,7 +611,7 @@ void wxGenericBrush::Create(const wxColour &colour, int style)
 void wxGenericBrush::Create( const wxBitmap &stipple )
 {
     UnRef();
-    wxCHECK_RET(stipple.Ok(), wxT("Invalid bitmap in wxGenericBrush::Create"));
+    wxCHECK_RET(stipple.Ok(), "Invalid bitmap in wxGenericBrush::Create");
 
     int style = stipple.GetMask() ? wxSTIPPLE_MASK_OPAQUE : wxSTIPPLE;
     m_refData = new wxGenericBrushRefData(wxNullGenericColour, style);
@@ -620,7 +620,7 @@ void wxGenericBrush::Create( const wxBitmap &stipple )
 
 void wxGenericBrush::Set( const wxGenericBrush& brush )
 {
-    wxCHECK_RET(Ok() && brush.Ok(), wxT("Invalid generic brush"));
+    wxCHECK_RET(Ok() && brush.Ok(), "Invalid generic brush");
     SetColour(brush.GetColour());
     M_GBRUSHDATA->m_style = brush.GetStyle();
     wxBitmap* stipple = brush.GetStipple();
@@ -629,7 +629,7 @@ void wxGenericBrush::Set( const wxGenericBrush& brush )
 }
 void wxGenericBrush::Set( const wxBrush &brush )
 {
-    wxCHECK_RET(Ok() && brush.Ok(), wxT("Invalid generic brush"));
+    wxCHECK_RET(Ok() && brush.Ok(), "Invalid generic brush");
     SetColour(brush.GetColour());
     M_GBRUSHDATA->m_style = brush.GetStyle();
     wxBitmap* stipple = brush.GetStipple();
@@ -638,7 +638,7 @@ void wxGenericBrush::Set( const wxBrush &brush )
 }
 void wxGenericBrush::SetColour( const wxGenericColour &colour )
 {
-    wxCHECK_RET(Ok() && colour.Ok(), wxT("Invalid generic brush or colour"));
+    wxCHECK_RET(Ok() && colour.Ok(), "Invalid generic brush or colour");
     M_GBRUSHDATA->m_colour = colour;
 }
 void wxGenericBrush::SetColour( const wxColour &colour )
@@ -651,12 +651,12 @@ void wxGenericBrush::SetColour( int red, int green, int blue, int alpha )
 }
 void wxGenericBrush::SetStyle( int style )
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic brush"));
+    wxCHECK_RET(Ok(), "Invalid generic brush");
     M_GBRUSHDATA->m_style = style;
 }
 void wxGenericBrush::SetStipple(const wxBitmap& stipple)
 {
-    wxCHECK_RET(Ok(), wxT("Invalid generic brush"));
+    wxCHECK_RET(Ok(), "Invalid generic brush");
     M_GBRUSHDATA->m_stipple = stipple;
     M_GBRUSHDATA->m_style = stipple.GetMask() ? wxSTIPPLE_MASK_OPAQUE : wxSTIPPLE;
 
@@ -664,7 +664,7 @@ void wxGenericBrush::SetStipple(const wxBitmap& stipple)
 
 wxBrush wxGenericBrush::GetBrush() const
 {
-    wxCHECK_MSG(Ok(), wxNullBrush, wxT("Invalid generic brush"));
+    wxCHECK_MSG(Ok(), wxNullBrush, "Invalid generic brush");
     if (M_GBRUSHDATA->m_stipple.Ok())
         return wxBrush(M_GBRUSHDATA->m_stipple);
 
@@ -673,28 +673,28 @@ wxBrush wxGenericBrush::GetBrush() const
 
 wxGenericColour wxGenericBrush::GetGenericColour() const
 {
-    wxCHECK_MSG(Ok(), wxNullGenericColour, wxT("Invalid generic brush"));
+    wxCHECK_MSG(Ok(), wxNullGenericColour, "Invalid generic brush");
     return M_GBRUSHDATA->m_colour;
 }
 wxColour wxGenericBrush::GetColour() const
 {
-    wxCHECK_MSG(Ok(), wxNullColour, wxT("Invalid generic brush"));
+    wxCHECK_MSG(Ok(), wxNullColour, "Invalid generic brush");
     return M_GBRUSHDATA->m_colour.GetColour();
 }
 int wxGenericBrush::GetStyle() const
 {
-    wxCHECK_MSG(Ok(), wxSOLID, wxT("Invalid generic brush"));
+    wxCHECK_MSG(Ok(), wxSOLID, "Invalid generic brush");
     return M_GBRUSHDATA->m_style;
 }
 wxBitmap* wxGenericBrush::GetStipple() const
 {
-    wxCHECK_MSG(Ok(), NULL, wxT("Invalid generic brush"));
+    wxCHECK_MSG(Ok(), NULL, "Invalid generic brush");
     return &M_GBRUSHDATA->m_stipple;
 }
 
 bool wxGenericBrush::IsSameAs(const wxGenericBrush& brush) const
 {
-    wxCHECK_MSG(Ok() && brush.Ok(), 1, wxT("Invalid generic brush"));
+    wxCHECK_MSG(Ok() && brush.Ok(), 1, "Invalid generic brush");
     wxGenericBrushRefData *bData = (wxGenericBrushRefData*)brush.GetRefData();
     return (M_GBRUSHDATA->m_colour  == bData->m_colour) &&
            (M_GBRUSHDATA->m_style   == bData->m_style) &&
@@ -706,7 +706,7 @@ bool wxGenericBrush::IsSameAs(const wxGenericBrush& brush) const
 }
 bool wxGenericBrush::IsSameAs(const wxBrush& brush) const
 {
-    wxCHECK_MSG(Ok() && brush.Ok(), 1, wxT("Invalid generic brush"));
+    wxCHECK_MSG(Ok() && brush.Ok(), 1, "Invalid generic brush");
     wxGenericBrush gB(brush);
     gB.GetGenericColour().SetAlpha(M_GBRUSHDATA->m_colour.GetAlpha());
     return IsSameAs(gB);
