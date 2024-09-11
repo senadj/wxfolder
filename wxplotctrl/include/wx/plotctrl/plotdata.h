@@ -15,7 +15,7 @@
 #include "wx/plotctrl/plotcurv.h"  // includes plotdefs.h
 #include "wx/plotctrl/plotfunc.h"
 
-class WXDLLIMPEXP_THINGS wxRangeIntSelection;
+class WXDLLIMPEXP_PLOTCTRL wxRangeIntSelection;
 class WXDLLIMPEXP_PLOTCTRL wxPlotData;
 
 //-----------------------------------------------------------------------------

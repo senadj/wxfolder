@@ -12,7 +12,7 @@
 #define _WX_PLOTCURVE_H_
 
 #include "wx/clntdata.h"
-#include "wx/things/genergdi.h"
+#include "wx/plotctrl/genergdi.h"
 #include "wx/plotctrl/plotdefs.h"
 
 class WXDLLIMPEXP_PLOTCTRL wxPlotCurve;

@@ -29,8 +29,8 @@
 
 #include "wx/plotctrl/plotdata.h"
 #include "wx/plotctrl/fourier.h"
-#include "wx/things/medsort.h"
-#include "wx/things/range.h"
+#include "wx/plotctrl/medsort.h"
+#include "wx/plotctrl/things_range.h"
 #include <math.h>
 
 #define wxPLOTDATA_MAX_DATA_COLUMNS 64

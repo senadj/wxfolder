@@ -15,7 +15,7 @@
     #pragma hdrstop
 #endif
 
-#include "wx/things/genergdi.h"
+#include "wx/plotctrl/genergdi.h"
 #include "wx/tokenzr.h"
 #include "wx/bitmap.h"
 

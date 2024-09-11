@@ -10,28 +10,28 @@
 #ifndef __WX_RANGE_H__
 #define __WX_RANGE_H__
 
-#include "wx/things/thingdef.h"
+#include "wx/plotctrl/plotdefs.h"
 
-class WXDLLIMPEXP_THINGS wxRangeInt;
-class WXDLLIMPEXP_THINGS wxRangeDouble;
-class WXDLLIMPEXP_THINGS wxRangeIntSelection;
-class WXDLLIMPEXP_THINGS wxRangeDoubleSelection;
+class WXDLLIMPEXP_PLOTCTRL wxRangeInt;
+class WXDLLIMPEXP_PLOTCTRL wxRangeDouble;
+class WXDLLIMPEXP_PLOTCTRL wxRangeIntSelection;
+class WXDLLIMPEXP_PLOTCTRL wxRangeDoubleSelection;
 
 #include "wx/dynarray.h"
-WX_DECLARE_OBJARRAY_WITH_DECL(wxRangeInt, wxArrayRangeInt, class WXDLLIMPEXP_THINGS);
-WX_DECLARE_OBJARRAY_WITH_DECL(wxRangeDouble, wxArrayRangeDouble, class WXDLLIMPEXP_THINGS);
-WX_DECLARE_OBJARRAY_WITH_DECL(wxRangeIntSelection, wxArrayRangeIntSelection, class WXDLLIMPEXP_THINGS);
-WX_DECLARE_OBJARRAY_WITH_DECL(wxRangeDoubleSelection, wxArrayRangeDoubleSelection, class WXDLLIMPEXP_THINGS);
+WX_DECLARE_OBJARRAY_WITH_DECL(wxRangeInt, wxArrayRangeInt, class WXDLLIMPEXP_PLOTCTRL);
+WX_DECLARE_OBJARRAY_WITH_DECL(wxRangeDouble, wxArrayRangeDouble, class WXDLLIMPEXP_PLOTCTRL);
+WX_DECLARE_OBJARRAY_WITH_DECL(wxRangeIntSelection, wxArrayRangeIntSelection, class WXDLLIMPEXP_PLOTCTRL);
+WX_DECLARE_OBJARRAY_WITH_DECL(wxRangeDoubleSelection, wxArrayRangeDoubleSelection, class WXDLLIMPEXP_PLOTCTRL);
 
 // Empty versions of ranges (0, -1)
-WXDLLIMPEXP_DATA_THINGS(extern const wxRangeInt) wxEmptyRangeInt;
-WXDLLIMPEXP_DATA_THINGS(extern const wxRangeDouble) wxEmptyRangeDouble;
+WXDLLIMPEXP_THINGSDATA_PLOTCTRL(extern const wxRangeInt) wxEmptyRangeInt;
+WXDLLIMPEXP_THINGSDATA_PLOTCTRL(extern const wxRangeDouble) wxEmptyRangeDouble;
 
 //=============================================================================
 // wxRangeInt
 //=============================================================================
 
-class WXDLLIMPEXP_THINGS wxRangeInt
+class WXDLLIMPEXP_PLOTCTRL wxRangeInt
 {
 public:
     inline wxRangeInt(int min_=0, int max_=0) : m_min(min_), m_max(max_) {}
@@ -120,7 +120,7 @@ public:
 // wxRangeIntSelection - ordered 1D array of wxRangeInts, combines to minimze size
 //=============================================================================
 
-class WXDLLIMPEXP_THINGS wxRangeIntSelection
+class WXDLLIMPEXP_PLOTCTRL wxRangeIntSelection
 {
 public :
     wxRangeIntSelection() {}
@@ -182,7 +182,7 @@ protected :
 // wxRangeDouble
 //=============================================================================
 
-class WXDLLIMPEXP_THINGS wxRangeDouble
+class WXDLLIMPEXP_PLOTCTRL wxRangeDouble
 {
 public:
     inline wxRangeDouble(wxDouble min_=0, wxDouble max_=0) : m_min(min_), m_max(max_) {}
@@ -266,7 +266,7 @@ public:
 // wxRangeDoubleSelection - ordered 1D array of wxRangeDoubles, combines to minimze size
 //=============================================================================
 
-class WXDLLIMPEXP_THINGS wxRangeDoubleSelection
+class WXDLLIMPEXP_PLOTCTRL wxRangeDoubleSelection
 {
 public :
     wxRangeDoubleSelection() {}

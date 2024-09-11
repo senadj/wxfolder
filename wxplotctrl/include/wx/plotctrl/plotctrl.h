@@ -18,7 +18,7 @@
 #include "wx/plotctrl/plotdata.h"
 #include "wx/plotctrl/plotmark.h"
 #include "wx/plotctrl/plotfunc.h"
-#include "wx/things/range.h"
+#include "wx/plotctrl/things_range.h"
 
 class WXDLLEXPORT wxDC;
 class WXDLLEXPORT wxNotifyEvent;
@@ -33,10 +33,10 @@ class WXDLLEXPORT wxBitmap;
 class WXDLLEXPORT wxTextCtrl;
 class WXDLLEXPORT wxPaintDC;
 
-class WXDLLIMPEXP_THINGS wxRangeIntSelection;
-class WXDLLIMPEXP_THINGS wxRangeDoubleSelection;
-class WXDLLIMPEXP_THINGS wxArrayRangeIntSelection;
-class WXDLLIMPEXP_THINGS wxArrayRangeDoubleSelection;
+class WXDLLIMPEXP_PLOTCTRL wxRangeIntSelection;
+class WXDLLIMPEXP_PLOTCTRL wxRangeDoubleSelection;
+class WXDLLIMPEXP_PLOTCTRL wxArrayRangeIntSelection;
+class WXDLLIMPEXP_PLOTCTRL wxArrayRangeDoubleSelection;
 
 class WXDLLIMPEXP_PLOTCTRL wxPlotCtrlArea;
 class WXDLLIMPEXP_PLOTCTRL wxPlotCtrlAxis;

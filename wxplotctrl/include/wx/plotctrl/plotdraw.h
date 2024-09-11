@@ -13,15 +13,15 @@
 
 #include "wx/plotctrl/plotdefs.h"
 #include "wx/plotctrl/plotmark.h"
-#include "wx/things/genergdi.h"
-#include "wx/things/range.h"
+#include "wx/plotctrl/genergdi.h"
+#include "wx/plotctrl/things_range.h"
 
 class WXDLLEXPORT wxDC;
 
-class WXDLLIMPEXP_THINGS wxRangeIntSelection;
-class WXDLLIMPEXP_THINGS wxRangeDoubleSelection;
-class WXDLLIMPEXP_THINGS wxArrayRangeIntSelection;
-class WXDLLIMPEXP_THINGS wxArrayRangeDoubleSelection;
+class WXDLLIMPEXP_PLOTCTRL wxRangeIntSelection;
+class WXDLLIMPEXP_PLOTCTRL wxRangeDoubleSelection;
+class WXDLLIMPEXP_PLOTCTRL wxArrayRangeIntSelection;
+class WXDLLIMPEXP_PLOTCTRL wxArrayRangeDoubleSelection;
 
 class WXDLLIMPEXP_PLOTCTRL wxPlotCtrl;
 class WXDLLIMPEXP_PLOTCTRL wxPlotCurve;

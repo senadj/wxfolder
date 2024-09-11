@@ -13,10 +13,6 @@ cd $YWX/wxfolder/wxjson/src
 g++ $CXXFLAGS -DWXMAKINGDLL_JSON -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_json-`wx-config --release`.so `wx-config --libs core`
 
-cd $YWX/wxfolder/wxthings/src
-g++ $CXXFLAGS -DWXMAKINGDLL_THINGS -c *.cpp
-g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_things-`wx-config --release`.so `wx-config --libs core`
-
 cd $YWX/wxfolder/wxplotctrl/src
 gcc -I../include -fPIC -c fourier.c
 g++ $CXXFLAGS -DWXMAKINGDLL_PLOTCTRL -c *.cpp *.cc

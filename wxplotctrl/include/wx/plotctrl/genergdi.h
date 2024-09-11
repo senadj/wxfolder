@@ -14,28 +14,28 @@
 #include "wx/colour.h"
 #include "wx/pen.h"
 #include "wx/brush.h"
-#include "wx/things/thingdef.h"
+#include "wx/plotctrl/plotdefs.h"
 
-class WXDLLIMPEXP_THINGS wxGenericColour;
-class WXDLLIMPEXP_THINGS wxGenericPen;
-class WXDLLIMPEXP_THINGS wxGenericBrush;
+class WXDLLIMPEXP_PLOTCTRL wxGenericColour;
+class WXDLLIMPEXP_PLOTCTRL wxGenericPen;
+class WXDLLIMPEXP_PLOTCTRL wxGenericBrush;
 
 // Uncreated and invalid versions of the generic colour, pen, and brush
-WXDLLIMPEXP_DATA_THINGS(extern const wxGenericColour) wxNullGenericColour;
-WXDLLIMPEXP_DATA_THINGS(extern const wxGenericPen)    wxNullGenericPen;
-WXDLLIMPEXP_DATA_THINGS(extern const wxGenericBrush)  wxNullGenericBrush;
+WXDLLIMPEXP_THINGSDATA_PLOTCTRL(extern const wxGenericColour) wxNullGenericColour;
+WXDLLIMPEXP_THINGSDATA_PLOTCTRL(extern const wxGenericPen)    wxNullGenericPen;
+WXDLLIMPEXP_THINGSDATA_PLOTCTRL(extern const wxGenericBrush)  wxNullGenericBrush;
 
 // Arrays of the generic colours, pens, and brushes
-WX_DECLARE_OBJARRAY_WITH_DECL(wxGenericColour, wxArrayGenericColour, class WXDLLIMPEXP_THINGS);
-WX_DECLARE_OBJARRAY_WITH_DECL(wxGenericPen,    wxArrayGenericPen,    class WXDLLIMPEXP_THINGS);
-WX_DECLARE_OBJARRAY_WITH_DECL(wxGenericBrush,  wxArrayGenericBrush,  class WXDLLIMPEXP_THINGS);
+WX_DECLARE_OBJARRAY_WITH_DECL(wxGenericColour, wxArrayGenericColour, class WXDLLIMPEXP_PLOTCTRL);
+WX_DECLARE_OBJARRAY_WITH_DECL(wxGenericPen,    wxArrayGenericPen,    class WXDLLIMPEXP_PLOTCTRL);
+WX_DECLARE_OBJARRAY_WITH_DECL(wxGenericBrush,  wxArrayGenericBrush,  class WXDLLIMPEXP_PLOTCTRL);
 
 //----------------------------------------------------------------------------
 // wxGenericColour - a RGBA colour that's converts from and to a wxColour.
 //    You can have thousands of them without using up resources. (on MSW)
 //----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_THINGS wxGenericColour : public wxObject
+class WXDLLIMPEXP_PLOTCTRL wxGenericColour : public wxObject
 {
 public:
     wxGenericColour() {}
@@ -114,8 +114,8 @@ public:
     wxGenericColour GetHotColdColour(double i) const;
 
     // Read colour to and from string
-    //wxString WriteString(const wxString& format = wxT("%d,%d,%d,%d")) const;
-    //bool ReadString(const wxString& str, const wxString& format = wxT("%d,%d,%d,%d"));
+    //wxString WriteString(const wxString& format = "%d,%d,%d,%d") const;
+    //bool ReadString(const wxString& str, const wxString& format = "%d,%d,%d,%d");
 
     // operators
     bool operator == (const wxGenericColour& c) const { return m_refData == c.m_refData; }
@@ -142,7 +142,7 @@ private:
 //    You can have thousands of them without using up resources. (on MSW)
 //----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_THINGS wxGenericPen : public wxObject
+class WXDLLIMPEXP_PLOTCTRL wxGenericPen : public wxObject
 {
 public:
     wxGenericPen() {}
@@ -233,7 +233,7 @@ private:
 //    You can have thousands of them without using up resources. (on MSW)
 //----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_THINGS wxGenericBrush : public wxObject
+class WXDLLIMPEXP_PLOTCTRL wxGenericBrush : public wxObject
 {
 public:
     wxGenericBrush() {}

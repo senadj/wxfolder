@@ -42,12 +42,15 @@
 #ifdef WXMAKINGDLL_PLOTCTRL
     #define WXDLLIMPEXP_PLOTCTRL WXEXPORT
     #define WXDLLIMPEXP_DATA_PLOTCTRL(type) WXEXPORT type
+    #define WXDLLIMPEXP_THINGSDATA_PLOTCTRL(type) WXEXPORT type
 #elif defined(WXUSINGDLL)
     #define WXDLLIMPEXP_PLOTCTRL WXIMPORT
     #define WXDLLIMPEXP_DATA_PLOTCTRL(type) WXIMPORT type
+    #define WXDLLIMPEXP_THINGSDATA_PLOTCTRL(type) WXIMPORT type
 #else // not making nor using DLL
     #define WXDLLIMPEXP_PLOTCTRL
     #define WXDLLIMPEXP_DATA_PLOTCTRL(type) type
+    #define WXDLLIMPEXP_THINGSDATA_PLOTCTRL(type) type
 #endif
 
 // ----------------------------------------------------------------------------
