@@ -7,23 +7,15 @@ cd $YWX/wxfolder/wxjson/src
 g++ $CXXFLAGS -DWXMAKINGDLL_JSON -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_json_gcc_custom.dll `wx-config --libs core` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_json-`wx-config --release`.dll.a
 
-cd $YWX/wxfolder/wxthings/src
-g++ $CXXFLAGS -DWXMAKINGDLL_THINGS -c *.cpp
-g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_things_gcc_custom.dll `wx-config --libs core` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_things-`wx-config --release`.dll.a
-
 cd $YWX/wxfolder/wxplotctrl/src
 gcc -I../include -c fourier.c
 g++ $CXXFLAGS -DWXMAKINGDLL_PLOTCTRL -c *.cpp *.cc
-g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_plotctrl_gcc_custom.dll `wx-config --libs core,things` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_plotctrl-`wx-config --release`.dll.a
+g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_plotctrl_gcc_custom.dll `wx-config --libs core` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_plotctrl-`wx-config --release`.dll.a
 
-cd $YWX/wxfolder/wxflatnotebook/src
-g++ $CXXFLAGS -DWXMAKINGDLL_FNB -c *.cpp
-g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_flatnotebook_gcc_custom.dll `wx-config --libs core` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_flatnotebook-`wx-config --release`.dll.a
-
-cd $YWX/wxfolder/wxawx/src
 g++ $CXXFLAGS -DWXMAKINGDLL_AWX -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_awx_gcc_custom.dll `wx-config --libs core` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_awx-`wx-config --release`.dll.a
 
 cd $YWX/wxfolder/wxbitz/src
 g++ $CXXFLAGS -DWXMAKINGDLL_BITZ -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_bitz_gcc_custom.dll `wx-config --libs core` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_bitz-`wx-config --release`.dll.a
+

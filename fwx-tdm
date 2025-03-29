@@ -61,26 +61,6 @@ fi
 }
 
 ##########################################################################################
-buildwxthings()
-{
-if [ ! -f "$YWX/lib/gcc_lib/libwxthings.a" ]; then
-	cd $YWX/wxfolder/wxthings
-	cp -R include $YWX
-	cd src
-	`wx-config --cxx` `wx-config --cxxflags` -c *.cpp
-	ar rc $YWX/lib/gcc_lib/libwxthings.a *.o
-fi
-
-if [ ! -f "$YWX/lib/gcc_lib/libwxthingsd.a" ] && [ `find $YWX/lib/gcc_lib/* -prune -name "*ud_core.a" | wc -l` -gt 0 ]; then
-	cd $YWX/wxfolder/wxthings
-	cp -R include $YWX
-	cd src
-	`wx-config --cxx --debug` `wx-config --cxxflags --debug` -c *.cpp
-	ar rc $YWX/lib/gcc_lib/libwxthingsd.a *.o
-fi
-}
-
-##########################################################################################
 buildwxplotctrl()
 {
 if [ ! -f "$YWX/lib/gcc_lib/libplotctrl.a" ]; then
@@ -145,5 +125,5 @@ fi
 ##########################################################################################
 
 
-export -f buildwxconfig buildwxjson buildwxthings buildwxplotctrl buildwxflatnotebook buildlibawx buildyconfig
+export -f buildwxconfig buildwxjson buildwxplotctrl buildwxflatnotebook buildlibawx buildyconfig
 

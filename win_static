@@ -9,21 +9,11 @@ g++ $CXXFLAGS -c *.cpp
 ar rc `wx-config --prefix`/lib/lib`wx-config --basename`_json-`wx-config --release`.a *.o
 ranlib `wx-config --prefix`/lib/lib`wx-config --basename`_json-`wx-config --release`.a
 
-cd $YWX/wxfolder/wxthings/src
-g++ $CXXFLAGS -c *.cpp
-ar rc `wx-config --prefix`/lib/lib`wx-config --basename`_things-`wx-config --release`.a *.o
-ranlib `wx-config --prefix`/lib/lib`wx-config --basename`_things-`wx-config --release`.a
-
 cd $YWX/wxfolder/wxplotctrl/src
 gcc -I../include -c fourier.c
 g++ $CXXFLAGS -c *.cpp *.cc
 ar rc `wx-config --prefix`/lib/lib`wx-config --basename`_plotctrl-`wx-config --release`.a *.o
 ranlib `wx-config --prefix`/lib/lib`wx-config --basename`_plotctrl-`wx-config --release`.a
-
-cd $YWX/wxfolder/wxflatnotebook/src
-g++ $CXXFLAGS -c *.cpp
-ar rc `wx-config --prefix`/lib/lib`wx-config --basename`_flatnotebook-`wx-config --release`.a *.o
-ranlib `wx-config --prefix`/lib/lib`wx-config --basename`_flatnotebook-`wx-config --release`.a
 
 cd $YWX/wxfolder/wxawx/src
 g++ $CXXFLAGS -c *.cpp
@@ -34,7 +24,4 @@ cd $YWX/wxfolder/wxbitz/src
 g++ $CXXFLAGS -c *.cpp
 ar rc `wx-config --prefix`/lib/lib`wx-config --basename`_bitz-`wx-config --release`.a *.o
 ranlib `wx-config --prefix`/lib/lib`wx-config --basename`_bitz-`wx-config --release`.a
-
-
-
 

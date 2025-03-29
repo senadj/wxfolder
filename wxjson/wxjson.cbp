@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="wxcode" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/wxcode" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DwxLongLong_t=1" />
+					<Add option="-DwxJSON_64BIT_INT=1" />
+					<Add option="-DwxUSE_UNICODE=1" />
+					<Add directory="include" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Unit filename="ReadMe.txt" />
+		<Unit filename="include/wx/json_defs.h" />
+		<Unit filename="include/wx/jsonreader.h" />
+		<Unit filename="include/wx/jsonval.h" />
+		<Unit filename="include/wx/jsonwriter.h" />
+		<Unit filename="src/comments.txt" />
+		<Unit filename="src/jsonreader.cpp" />
+		<Unit filename="src/jsonval.cpp" />
+		<Unit filename="src/jsonwriter.cpp" />
+		<Extensions>
+			<code_completion>
+				<search_path add="${YWXI1}" />
+				<search_path add="${YWXI2}" />
+			</code_completion>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

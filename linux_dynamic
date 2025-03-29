@@ -3,12 +3,6 @@ CXXFLAGS="-std=gnu++0x -Wno-deprecated-declarations -Wno-attributes -DDLL_EXPORT
 cd $YWX/wxfolder
 for dir in `find . -name include`; do cp -R $dir/* `wx-config --prefix`/include/wx-`wx-config --release`; done
 
-cp $YWX/wxfolder/wxmathplot/mathplot.h `wx-config --prefix`/include/wx-`wx-config --release`"/wx/"
-cd $YWX/wxfolder/wxmathplot
-g++ $CXXFLAGS -Dmathplot_EXPORTS -c mathplot.cpp
-g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_mathplot-`wx-config --release`.so `wx-config --libs core`
-
-
 cd $YWX/wxfolder/wxjson/src
 g++ $CXXFLAGS -DWXMAKINGDLL_JSON -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_json-`wx-config --release`.so `wx-config --libs core`
@@ -18,10 +12,6 @@ gcc -I../include -fPIC -c fourier.c
 g++ $CXXFLAGS -DWXMAKINGDLL_PLOTCTRL -c *.cpp *.cc
 g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_plotctrl-`wx-config --release`.so `wx-config --libs core`
 
-cd $YWX/wxfolder/wxflatnotebook/src
-g++ $CXXFLAGS -DWXMAKINGDLL_FNB -c *.cpp
-g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_flatnotebook-`wx-config --release`.so `wx-config --libs core`
-
 cd $YWX/wxfolder/wxawx/src
 g++ $CXXFLAGS -DWXMAKINGDLL_AWX -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_awx-`wx-config --release`.so `wx-config --libs core`
@@ -30,7 +20,4 @@ cd $YWX/wxfolder/wxbitz/src
 g++ $CXXFLAGS -DWXMAKINGDLL_BITZ -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_bitz-`wx-config --release`.so `wx-config --libs core`
 
-cd $YWX/wxfolder/wxmathplot/src
-g++ $CXXFLAGS -Dmathplot_EXPORTS -c *.cpp
-g++ -shared *.o -o `wx-config --prefix`/lib/lib`wx-config --basename`_mathplot-`wx-config --release`.so `wx-config --libs core`
 

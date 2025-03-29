@@ -1,0 +1,21 @@
+curl -Lk -o wxsqlite3-4.9.7.tar.gz https://github.com/utelle/wxsqlite3/archive/refs/tags/v4.9.7.tar.gz
+tar xvzf wxsqlite3-4.9.7.tar.gz
+cd wxsqlite3-4.9.7
+aclocal
+automake
+autoconf
+./configure
+sed 's/libwxcode/libwx/g' -i Makefile
+make
+
+# relink library only with wx base:
+cp Makefile xMakefile
+YTMP=`wx-config --libs core | awk '{for (i=1; i<=NF; i++) if ($i ~ /core/) print $i}'`
+sed "s/\ $YTMP//g" -i Makefile
+# this will trigger library relink (also dynamic) with wxbase only and also throw many errors (sample relink fail):
+rm libwx_gtk3u_wxsqlite3-`wx-config --release`.la
+make
+cp ./.libs/*.so $YWX/lib
+
+for dir in `find . -name include`; do cp -R $dir/* `wx-config --prefix`/include/wx-`wx-config --release`; done
+

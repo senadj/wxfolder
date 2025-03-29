@@ -1,7 +1,7 @@
 CPPDEPS = -MT$@ -MF`echo $@ | sed -e 's,\.o$$,.d,'` -MD -MP
 OBJECTS := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 CXXFLAGS = -std=gnu++0x -Wno-attributes -Wno-deprecated-declarations -Wno-placement-new -I. -I${YBOO}/include `wx-config --cxxflags` -c
-LDFLAGS = `wx-config --libs std,adv,awx,things,plotctrl` -Wl,-rpath=${YWX}/lib -Wl,-rpath=${YBOO}/lib -L${YBOO}/lib -lboost_system -lboost_thread
+LDFLAGS = `wx-config --libs std,adv,awx,plotctrl` -Wl,-rpath=${YWX}/lib -Wl,-rpath=${YBOO}/lib -L${YBOO}/lib -lboost_system -lboost_thread
 
 ifneq (,$(findstring MINGW,$(shell uname)))
 	PROG = ./bin/Release/$(notdir $(CURDIR)).exe
