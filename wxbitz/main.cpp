@@ -1,3 +1,5 @@
+// g++ `wx-config --cxxflags` main.cpp -c && g++ main.o `wx-config --libs core,bitz`
+
 #include <wx/app.h>
 #include <wx/frame.h>
 #include <wx/panel.h>

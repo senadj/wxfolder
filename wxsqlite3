@@ -1,3 +1,63 @@
+##############################
+# 4.10.12 tdm-gcc 9.2 (32bit)
+##############################
+curl -Lk -o wxsqlite3-4.10.12.tar.gz https://github.com/utelle/wxsqlite3/archive/refs/tags/v4.10.12.tar.gz
+tar xvzf wxsqlite3-4.10.12.tar.gz
+cd wxsqlite3-4.10.12
+
+{
+  echo '#include <winnt.h>'
+  echo 'PVOID WINAPI SecureZeroMemory(PVOID ptr, SIZE_T cnt) {volatile char* vptr = (volatile char*)ptr; while (cnt--) { *vptr++ = 0; } return ptr;}'
+  cat ./src/sqlite3mc_amalgamation.c
+} > temp.c 
+
+mv temp.c ./src/sqlite3mc_amalgamation.c
+
+
+
+export WXWIN=$YWX
+cp -R include/* `wx-config --prefix`/include/wx-`wx-config --release`
+cd build
+sed -i 's/CXX = g++/CXX = g++ -std=gnu++0x/' config.gcc
+sed -i 's/WXWIN/YWX/g' config.gcc
+sed -i 's/WXWIN/YWX/g' wx_setup.props
+# edit manualy INCLUDE LINK (insert complete output from wx-config)
+vi wxsqlite3.make
+INCLUDES += -I/ysw/wx328d/lib/wx/include/msw-unicode-3.2 -I/ysw/wx328d/include/wx-3.2 -D_LARGEFILE_SOURCE=unknown -DwxDEBUG_LEVEL=0 -DWXUSINGDLL -D__WXMSW__ -mthreads  -I../include -I../src
+ALL_LDFLAGS += $(LDFLAGS) -L/ysw/wx328d/lib -lwx_baseu-3.2 -L/usr/lib32 -m32 -s
+# use this with dynamic *.a wihtout *.dll
+make config=release_wxdll_win32 verbose=1 wxsqlite3
+# use this when you need both *.a and *.dll
+make config=release_dll_win32 verbose=1 wxsqlite3
+
+
+
+##########################
+# wxSQLite3 linux build with wx base
+##########################
+aclocal
+automake
+autoconf
+# use this to prevent samples from building (in case you only want wx base)
+sed '/^# Samples/ q' Makefile.am > temp && mv temp Makefile.am
+sed -i 's/wxcode/wx/' configure.ac
+./configure
+# already replaced above: sed 's/libwxcode/libwx/g' -i Makefile
+make
+
+cp .libs/libwx_baseu_wxsqlite3-3.2.so.0.0.0 $YWX/lib/libwx_gtk3u_wxsqlite3-3.2.so
+cp .libs/libwx_baseu_wxsqlite3-3.2.so.0.0.0 $YWX/lib/libwx_baseu_wxsqlite3-3.2.so.0
+
+# on WSL with base only:
+curl -LOk https://github.com/utelle/wxsqlite3/archive/refs/tags/v4.10.3.tar.gz
+# ...
+# + remove coreu_base or maybe base_coreu from Makefile so it doesn't link with gui (needed for examples)
+make lib
+
+
+##########################
+# 4.9.7
+##########################
 curl -Lk -o wxsqlite3-4.9.7.tar.gz https://github.com/utelle/wxsqlite3/archive/refs/tags/v4.9.7.tar.gz
 tar xvzf wxsqlite3-4.9.7.tar.gz
 cd wxsqlite3-4.9.7

@@ -12,6 +12,7 @@ gcc -I../include -c fourier.c
 g++ $CXXFLAGS -DWXMAKINGDLL_PLOTCTRL -c *.cpp *.cc
 g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_plotctrl_gcc_custom.dll `wx-config --libs core` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_plotctrl-`wx-config --release`.dll.a
 
+cd $YWX/wxfolder/wxawx/src
 g++ $CXXFLAGS -DWXMAKINGDLL_AWX -c *.cpp
 g++ -shared *.o -o `wx-config --prefix`/lib/wxmsw`wx-config --version | tr -d .`u_awx_gcc_custom.dll `wx-config --libs core` -Wl,--out-implib,`wx-config --prefix`/lib/lib`wx-config --basename`_awx-`wx-config --release`.dll.a
 
