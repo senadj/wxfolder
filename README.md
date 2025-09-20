@@ -5,14 +5,17 @@ Most wxWidgets contrib module files have been modified so they compile with incl
 
 Contents:
 
- - Customized wx-config for [windows port](https://sites.google.com/site/wxconfig/) of [wx-config](https://wiki.wxwidgets.org/Wx-Config)
- - y-config tool, supports Boost, OpenSSL, QRencode, BerkleyDB, miniUPNPc, PCRE, Jansson
+ - ycc
  - [wxJSON](http://wxcode.sourceforge.net/docs/wxjson/index.html)
- - [wxThings](http://wxcode.sourceforge.net/showcomp.php?name=wxThings)
  - [wxPlotCtrl](http://wxcode.sourceforge.net/showcomp.php?name=wxPlotCtrl)
- - [wxFlatNotebook](https://sourceforge.net/projects/wxflatnotebook)
- - [awxLed, awxButton, awxToolbar](https://iftools.com/opensource/awx.en.php)
+ - [awxLed](https://iftools.com/opensource/awx.en.php)
 
 
 
 Follow links for original files (with documentation, makefiles, other build scripts...)
+
+
+# wx-config RPATH mod (prints linker option rpath with --libs switch)
+``` sh
+sed -i 's/is_installed\ ||\ //' $YWX/bin/wx-config
+```
