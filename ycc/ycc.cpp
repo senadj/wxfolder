@@ -16,13 +16,13 @@
 #define LIBSBASE "-L/ysw/wx328d ###XXX### ###XMLNET### -lwx_baseu-3.2"
 #define LIBSCORE "-L/ysw/wx328d -Wl,--subsystem,windows -mwindows ###XXX### -lwx_mswu_core-3.2 ###XMLNET### -lwx_baseu-3.2"
 #define LIBSSTD "-L/ysw/wx328d -Wl,--subsystem,windows -mwindows ###XXX### -lwx_mswu_xrc-3.2 -lwx_mswu_html-3.2 -lwx_mswu_qa-3.2 -lwx_mswu_core-3.2 -lwx_baseu_xml-3.2 -lwx_baseu_net-3.2 -lwx_baseu-3.2"
-#else	// target static wx:
+#else	// end YCC4WXDLL. Target static wx lib:
 #define CXXFLAGSBASE "-I/ysw/wx328 -D_FILE_OFFSET_BITS=64 -DwxDEBUG_LEVEL=0 -D__WXMSW__ -DwxUSE_GUI=0 -mthreads"
 #define CXXFLAGS "-I/ysw/wx328 -D_FILE_OFFSET_BITS=64 -DwxDEBUG_LEVEL=0 -D__WXMSW__ -mthreads"
 #define LIBSBASE "-L/ysw/wx328 ###XXX### ###XMLNET### -lwx_baseu-3.2 -lwxtiff-3.2 -lwxjpeg-3.2 -lwxpng-3.2 -lwxregexu-3.2 -lwxscintilla-3.2 -lwxexpat-3.2 -lwxzlib-3.2 -lrpcrt4 -loleaut32 -lole32 -luuid -luxtheme -lwinspool -lwinmm -lshell32 -lshlwapi -lcomctl32 -lcomdlg32 -ladvapi32 -lversion -lws2_32 -lgdi32 -loleacc -lwinhttp"
 #define LIBSCORE "-L/ysw/wx328 -Wl,--subsystem,windows -mwindows ###XXX### -lwx_mswu_core-3.2 ###XMLNET### -lwx_baseu-3.2 -lwxtiff-3.2 -lwxjpeg-3.2 -lwxpng-3.2 -lwxregexu-3.2 -lwxscintilla-3.2 -lwxexpat-3.2 -lwxzlib-3.2 -lrpcrt4 -loleaut32 -lole32 -luuid -luxtheme -lwinspool -lwinmm -lshell32 -lshlwapi -lcomctl32 -lcomdlg32 -ladvapi32 -lversion -lws2_32 -lgdi32 -loleacc -lwinhttp"
 #define LIBSSTD  "-L/ysw/wx328 -Wl,--subsystem,windows -mwindows ###XXX### -lwx_mswu_xrc-3.2 -lwx_mswu_html-3.2 -lwx_mswu_qa-3.2 -lwx_mswu_core-3.2 -lwx_baseu_xml-3.2 -lwx_baseu_net-3.2 -lwx_baseu-3.2 -lwxtiff-3.2 -lwxjpeg-3.2 -lwxpng-3.2 -lwxregexu-3.2 -lwxscintilla-3.2 -lwxexpat-3.2 -lwxzlib-3.2 -lrpcrt4 -loleaut32 -lole32 -luuid -luxtheme -lwinspool -lwinmm -lshell32 -lshlwapi -lcomctl32 -lcomdlg32 -ladvapi32 -lversion -lws2_32 -lgdi32 -loleacc -lwinhttp"
-#endif	// end YCC4WXDLL
+#endif	// end Windows
 #else	// Linux
 #define YSW "/"
 #define CXXFLAGSBASE "-I/ysw/wx331d -D_FILE_OFFSET_BITS=64 -DwxDEBUG_LEVEL=0 -DWXUSINGDLL -D__WXGTK__ -DwxUSE_GUI=0 -pthread"
